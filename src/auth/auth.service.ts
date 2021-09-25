@@ -5,6 +5,7 @@ import { Users } from '../entities/users.entity';
 import {LoginUserDTO} from '../users/dto/login.users.dto'
 import {isHashValid} from '../util/cipher'
 import {ErrorCode} from '../http-exception.filter'
+import {UserStatus} from '../users/users.type'
 
 @Injectable()
 export class AuthService {
@@ -14,33 +15,21 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
-    console.log("validateUser.email", email)
-    console.log("validateUser.pass", pass)
     const user = await Users.findByEmail(email);
     if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_EMAIL)
 
-    if (!user.status) throw new UnauthorizedException(ErrorCode.INVALID_USER_STATUS)
+    if (user.status === UserStatus.UNCONFIRMED) throw new UnauthorizedException(ErrorCode.INVALID_USER_STATUS)
 
     const isPasswordValid = await isHashValid(pass, user.password)
-    if (!isPasswordValid) throw new ServiceUnavailableException(ErrorCode.INVALID_PASSWORD)
 
-    if (user && user.password === pass) {
+    if (user && isPasswordValid) {
       const { password, ...result } = user;
-      console.log(result)
       return result;
     }
     return null;
   }
 
-  async login(data: LoginUserDTO) {
-    const user = await Users.findByEmail(data.email);
-    if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_EMAIL)
-
-    if (!user.status) throw new UnauthorizedException(ErrorCode.INVALID_USER_STATUS)
-
-    const isPasswordValid = await isHashValid(data.password, user.password)
-    if (!isPasswordValid) throw new ServiceUnavailableException(ErrorCode.INVALID_PASSWORD)
-
+  async login(user: any) {
     const payload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),

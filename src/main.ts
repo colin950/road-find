@@ -5,7 +5,6 @@ import {HttpExceptionFilter} from './http-exception.filter'
 import {ConfigService} from '@nestjs/config'
 
 async function bootstrap() {
-  console.log(AppModule)
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(

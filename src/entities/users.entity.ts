@@ -39,6 +39,6 @@ export class Users extends CreatedUpdatedTime {
   }
 
   static async findByEmail(email: string) {
-    return this.findOne(email)
+    return this.findOne({ email: email })
   }
 }

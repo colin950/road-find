@@ -11,7 +11,7 @@ import {AuthModule} from './auth/auth.module'
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env.local',
+      envFilePath: '.env',
       isGlobal: true,
       load: [configuration],
     }),
@@ -28,7 +28,7 @@ import {AuthModule} from './auth/auth.module'
         schema: configService.get('database.schema'),
         entities: [__dirname + '/**/*.entity.{js,ts}'],
         namingStrategy: new SnakeNamingStrategy(),
-        synchronize: true,
+        synchronize: false,
       }),
     }),
     UsersModule,

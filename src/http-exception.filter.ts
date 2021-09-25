@@ -4,7 +4,9 @@ import { Request, Response } from 'express';
 export enum ErrorCode {
   NOT_FOUND_EMAIL = 'not_found_email',
   INVALID_USER_STATUS = 'invalid_user_status',
-  INVALID_PASSWORD = 'invalid_password'
+  INVALID_PASSWORD = 'invalid_password',
+  ALREADY_EXIST_EMAIL = 'already_exist_email',
+  UNAUTHORIZED = 'UNAUTHORIZED'
 }
 
 @Catch(HttpException)
@@ -18,8 +20,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response
       .status(status)
       .json({
-        code: status,
-        timestamp: new Date().toISOString(),
+        code: exception.getResponse()['message'],
+        // timestamp: new Date().toISOString(),
         path: request.url,
       });
   }
