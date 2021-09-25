@@ -1,7 +1,7 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common'
 import { Users } from '../entities/users.entity';
 import {hashPassword} from '../util/cipher'
-import {CreateUserDTO} from './users.dto'
+import {CreateUsersDTO} from './dto/create.users.dto'
 
 import {randomInt} from 'crypto'
 import {RandomGenerator} from 'typeorm/util/RandomGenerator'
@@ -9,8 +9,8 @@ import {UserStatus} from './users.type'
 
 @Injectable()
 export class UsersService {
-  async create(createUserDto: CreateUserDTO) {
-    const { email, password, name } = createUserDto
+  async create(createUsersDto: CreateUsersDTO) {
+    const { email, password, name } = createUsersDto
     const lowerCaseEmail = email.toLowerCase()
     await this.isAvailableEmail(lowerCaseEmail)
 

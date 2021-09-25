@@ -2,7 +2,7 @@ import {Injectable, NotFoundException, ServiceUnavailableException, Unauthorized
 import {JwtService} from '@nestjs/jwt'
 import {UsersService} from '../users/users.service'
 import { Users } from '../entities/users.entity';
-import {LoginUserDTO} from '../users/users.dto'
+import {LoginUserDTO} from '../users/dto/login.users.dto'
 import {isHashValid} from '../util/cipher'
 import {ErrorCode} from '../http-exception.filter'
 

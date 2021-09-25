@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common'
 import { UsersService } from './users.service';
 import {LocalAuthGuard} from '../auth/local-auth.guard';
-import { CreateUserDTO, LoginUserDTO } from './users.dto';
+import { CreateUsersDTO } from './dto/create.users.dto';
+import {LoginUserDTO} from './dto/login.users.dto';
 import {AuthService} from '../auth/auth.service'
 
 @Controller('users')
@@ -16,7 +17,7 @@ export class UsersController {
     ) {}
 
   @Post('/create')
-  create(@Body() createUserDto: CreateUserDTO) {
+  create(@Body() createUserDto: CreateUsersDTO) {
     return this.usersService.create(createUserDto);
   }
 
