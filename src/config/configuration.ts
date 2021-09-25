@@ -12,4 +12,10 @@ export default () => ({
     schema: get('DATABASE_SCHEMA') ?? '',
   },
   port: get('PORT') ?? 3000,
+  aws: {
+    id: get('ACCESS_KEY_ID') ?? '',
+    secret: get('SECRET_ACCESS_KEY') ?? '',
+    region: get('REGION') ?? '',
+    bucket: get('BUCKET') ?? '',
+  }
 });

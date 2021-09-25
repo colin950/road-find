@@ -7,6 +7,8 @@ import { UsersModule } from './users/users.module';
 import configuration from './config/configuration';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import {AuthModule} from './auth/auth.module'
+import { AwsService } from './aws/aws.service';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -33,8 +35,9 @@ import {AuthModule} from './auth/auth.module'
     }),
     UsersModule,
     AuthModule,
+    AwsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AwsService],
 })
 export class AppModule {}
