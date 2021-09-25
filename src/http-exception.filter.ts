@@ -6,7 +6,8 @@ export enum ErrorCode {
   INVALID_USER_STATUS = 'invalid_user_status',
   INVALID_PASSWORD = 'invalid_password',
   ALREADY_EXIST_EMAIL = 'already_exist_email',
-  UNAUTHORIZED = 'UNAUTHORIZED'
+  UNAUTHORIZED = 'UNAUTHORIZED',
+  NOT_FOUND_TOKEN = 'NOT_FOUND_TOKEN'
 }
 
 @Catch(HttpException)

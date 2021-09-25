@@ -1,7 +1,7 @@
 import {
   Controller,
   Post,
-  Body, UseGuards, Req,
+  Body, UseGuards, Req, Put,
 } from '@nestjs/common'
 import {UsersService} from './users.service';
 import {LocalAuthGuard} from '../auth/local-auth.guard';
@@ -24,5 +24,20 @@ export class UsersController {
   @Post('/login')
   login(@Req() req) {
     return this.authService.login(req.user);
+  }
+
+  @Post('/verification/token')
+  verificationToken(@Body() token: string, tokenType: string) {
+    return this.usersService.verificationToken(token, tokenType)
+  }
+
+  @Post('/reset/password')
+  requestResetPassword(@Body() email: string) {
+    return this.usersService.requestResetPassword(email)
+  }
+
+  @Put('/reset/password')
+  resetPassword(@Body() email: string, password: string) {
+    return this.usersService.resetPassword(email, password)
   }
 }

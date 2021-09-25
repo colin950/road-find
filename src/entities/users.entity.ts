@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CreatedUpdatedTime } from './common/created.updated.time.entity';
+import {UserStatus} from '../users/users.type'
 
 @Entity()
 export class Users extends CreatedUpdatedTime {
@@ -28,7 +29,10 @@ export class Users extends CreatedUpdatedTime {
   token: string;
 
   @Column({nullable: true})
-  confirmed_at: Date;
+  confirmedAt: Date;
+
+  @Column({nullable: true})
+  resetPasswordToken: string;
 
   static async createUser(user: any) {
     return this.createQueryBuilder()
@@ -40,5 +44,34 @@ export class Users extends CreatedUpdatedTime {
 
   static async findByEmail(email: string) {
     return this.findOne({ email: email })
+  }
+
+  static async findByToken(token: string) {
+    return this.findOne({ token: token })
+  }
+
+  static async findByResetPasswordToken(token: string) {
+    return this.findOne({ resetPasswordToken: token })
+  }
+
+  static async findByTokenAndUpdateRegistered(token: string) {
+    return this.createQueryBuilder()
+      .update(Users)
+      .set({ token: '', confirmedAt: new Date(), status: UserStatus.REGISTERED })
+      .where({ token: token })
+  }
+
+  static async findByEmailAndUpdateResetPasswordToken(email: string, token: string) {
+    return this.createQueryBuilder()
+      .update(Users)
+      .set({ resetPasswordToken: token })
+      .where({ email: email })
+  }
+
+  static async findByEmailAndUpdatePassword(email: string, password: any) {
+    return this.createQueryBuilder()
+      .update(Users)
+      .set({ password: password })
+      .where({ email: email })
   }
 }
