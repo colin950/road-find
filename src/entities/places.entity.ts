@@ -5,6 +5,7 @@ import {
   Index,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { CreatedUpdatedTime } from './common/created.updated.time.entity';
@@ -26,7 +27,7 @@ export class Places extends CreatedUpdatedTime {
   coords!: Geometry;
 
   // == Relations ==
-  @ManyToMany(() => Roads)
+  @OneToMany(() => Roads, (road) => road.place)
   @JoinTable()
   roads: Roads[];
 }

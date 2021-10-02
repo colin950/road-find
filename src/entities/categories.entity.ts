@@ -13,11 +13,11 @@ export class Categories extends CreatedUpdatedTime {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id!: number;
 
-  @Column({ type: 'varchar', length: 45, default: '' })
+  @Column({ length: 45, default: '' })
   @Index({ unique: true })
   key!: string;
 
-  @Column({ name: 'varchar', length: 60, default: '' })
+  @Column({ length: 60, default: '' })
   name!: string;
 
   // == Relations ==````

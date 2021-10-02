@@ -1,6 +1,6 @@
 import {Injectable, InternalServerErrorException} from '@nestjs/common'
 import * as AWS from 'aws-sdk'
-import {ErrorCode} from '../http-exception.filter'
+import {ErrorCode} from '../util/interceptors/http-exception.filter'
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

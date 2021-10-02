@@ -8,6 +8,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AuthModule } from './auth/auth.module';
 import { AwsService } from './aws/aws.service';
 import { AwsModule } from './aws/aws.module';
+import { RoadsModule } from './roads/roads.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -31,11 +32,13 @@ import configuration from './config/configuration';
         entities: [__dirname + '/**/*.entity.{js,ts}'],
         namingStrategy: new SnakeNamingStrategy(),
         synchronize: false,
+        timezone: 'Asia/Seoul',
       }),
     }),
     UsersModule,
     AuthModule,
     AwsModule,
+    RoadsModule,
   ],
   controllers: [AppController],
   providers: [AppService, AwsService],

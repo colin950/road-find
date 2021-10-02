@@ -10,7 +10,7 @@ import { UsersService } from '../users/users.service';
 import { Users, UserStatus } from '../entities/users.entity';
 import { LoginUserDTO } from '../users/dto/login.users.dto';
 import { isHashValid } from '../util/cipher';
-import { ErrorCode } from '../http-exception.filter';
+import { ErrorCode } from '../util/interceptors/http-exception.filter';
 
 @Injectable()
 export class AuthService {

@@ -36,9 +36,6 @@ export class Roads extends CreatedUpdatedTime {
   @Index({ spatial: true })
   routes!: Geometry;
 
-  @Column({ nullable: true })
-  imageUrl?: string;
-
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
 
@@ -51,10 +48,10 @@ export class Roads extends CreatedUpdatedTime {
   })
   user!: Users;
 
-  @ManyToMany(() => Places, {
+  @ManyToOne(() => Places, {
     onDelete: 'SET NULL',
   })
-  places!: Places[];
+  place!: Places;
 
   @ManyToOne(() => Categories, (category) => category.roads, {
     onDelete: 'SET NULL',

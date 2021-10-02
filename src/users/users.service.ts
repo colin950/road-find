@@ -12,7 +12,7 @@ import { hashPassword } from '../util/cipher';
 import { CreateUsersDTO } from './dto/create.users.dto';
 
 import { randomInt } from 'crypto';
-import { ErrorCode } from '../http-exception.filter';
+import { ErrorCode } from '../util/interceptors/http-exception.filter';
 import * as nodemailer from 'nodemailer';
 import { TokenType } from './users.type';
 
@@ -100,7 +100,7 @@ export class UsersService {
       text: `아래의 코드를 입력해 인증을 완료해 주세요. ${token}`,
     };
 
-    await this.sendMail(mail)
+    await this.sendMail(mail);
     return user;
   }
 
