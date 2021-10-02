@@ -9,7 +9,6 @@ import {
 } from 'typeorm';
 import { CreatedUpdatedTime } from './common/created.updated.time.entity';
 import { Roads } from './roads.entity';
-import { Users } from './users.entity';
 
 @Entity()
 export class RoadSpots extends CreatedUpdatedTime {

@@ -12,12 +12,12 @@ import { Categories } from './categories.entity';
 import { CreatedUpdatedTime } from './common/created.updated.time.entity';
 import { Roads } from './roads.entity';
 
-enum SnsType {
+export enum SnsType {
   EMAIL,
   APPLE,
 }
 
-enum UserStatus {
+export enum UserStatus {
   UNCONFIRMED,
   REGISTERED,
 }

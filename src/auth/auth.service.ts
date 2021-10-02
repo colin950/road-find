@@ -1,26 +1,31 @@
-import {Injectable, NotFoundException, ServiceUnavailableException, UnauthorizedException} from '@nestjs/common'
-import {JwtService} from '@nestjs/jwt'
-import {UsersService} from '../users/users.service'
-import { Users } from '../entities/users.entity';
-import {LoginUserDTO} from '../users/dto/login.users.dto'
-import {isHashValid} from '../util/cipher'
-import {ErrorCode} from '../http-exception.filter'
-import {UserStatus} from '../users/users.type'
+import {
+  Injectable,
+  NotFoundException,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from '../users/users.service';
+import { Users, UserStatus } from '../entities/users.entity';
+import { LoginUserDTO } from '../users/dto/login.users.dto';
+import { isHashValid } from '../util/cipher';
+import { ErrorCode } from '../http-exception.filter';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await Users.findByEmail(email);
-    if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_EMAIL)
+    if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_EMAIL);
 
-    if (user.status === UserStatus.UNCONFIRMED) throw new UnauthorizedException(ErrorCode.INVALID_USER_STATUS)
+    if (user.status === UserStatus.UNCONFIRMED)
+      throw new UnauthorizedException(ErrorCode.INVALID_USER_STATUS);
 
-    const isPasswordValid = await isHashValid(pass, user.password)
+    const isPasswordValid = await isHashValid(pass, user.password);
 
     if (user && isPasswordValid) {
       const { password, ...result } = user;
