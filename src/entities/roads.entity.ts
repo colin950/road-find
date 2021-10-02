@@ -73,10 +73,10 @@ export class Roads extends CreatedUpdatedTime {
   @OneToMany(() => RoadSpots, (spot) => spot.road, {
     cascade: true,
   })
-  spots?: RoadSpots[];
+  spots: RoadSpots[] | null;
 
   @OneToMany(() => RoadImages, (image) => image.road, {
     cascade: true,
   })
-  images?: RoadImages[];
+  images: RoadImages[] | null;
 }

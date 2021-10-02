@@ -8,6 +8,7 @@ import { Spot } from './types/spot';
 
 import { Point, LineString } from 'geojson';
 import { RoadAnalytics } from 'src/entities/road.analytics.entity';
+import { RoadImages } from 'src/entities/road.images.entity';
 
 @Injectable()
 export class RoadsService {
@@ -15,15 +16,16 @@ export class RoadsService {
     title: string,
     content: string,
     routes: point[],
-    spots: Spot[],
+    spots: Spot[] | null,
     distance: number,
     placeCode: string,
     categoryId: number,
+    images: string[] | null,
   ): Promise<Roads> {
     const place = await Places.findOne(placeCode);
     const category = await Categories.findOne(categoryId);
 
-    const convertedRoadSpots: RoadSpots[] = spots.map((spot) => {
+    const convertedRoadSpots: RoadSpots[] = spots?.map((spot) => {
       const roadSpot = new RoadSpots();
       roadSpot.title = spot.title;
       roadSpot.content = spot.content;
@@ -33,6 +35,12 @@ export class RoadsService {
       };
 
       return roadSpot;
+    });
+
+    const createImages: RoadImages[] = images?.map((image) => {
+      const roadImage = new RoadImages();
+      roadImage.imageUrl = image;
+      return roadImage;
     });
 
     const createRoadAnalytics = new RoadAnalytics();
@@ -49,6 +57,7 @@ export class RoadsService {
     createRoad.place = place;
     createRoad.category = category;
     createRoad.roadAnalytics = createRoadAnalytics;
+    createRoad.images = createImages ?? null;
     await createRoad.save();
 
     return createRoad;

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { point } from '../types/point';
 import { Spot } from '../types/spot';
 
@@ -35,6 +41,7 @@ export class CreateRoadRequestDto {
   categoryId: number;
 
   @ApiProperty()
+  @IsOptional()
   @IsArray()
-  spots: Spot[];
+  spots: Spot[] | null;
 }
