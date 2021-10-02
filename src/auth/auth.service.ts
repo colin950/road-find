@@ -1,9 +1,10 @@
 import {
+  BadRequestException,
   Injectable,
   NotFoundException,
   ServiceUnavailableException,
   UnauthorizedException,
-} from '@nestjs/common';
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { Users, UserStatus } from '../entities/users.entity';
@@ -26,6 +27,8 @@ export class AuthService {
       throw new UnauthorizedException(ErrorCode.INVALID_USER_STATUS);
 
     const isPasswordValid = await isHashValid(pass, user.password);
+
+    if (!isPasswordValid) throw new BadRequestException(ErrorCode.INVALID_PASSWORD)
 
     if (user && isPasswordValid) {
       const { password, ...result } = user;
