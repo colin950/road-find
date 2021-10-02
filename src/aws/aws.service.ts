@@ -1,19 +1,22 @@
-import {Inject, Injectable, InternalServerErrorException} from '@nestjs/common'
+import {Injectable, InternalServerErrorException} from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import {ErrorCode} from '../http-exception.filter'
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AwsService {
   private readonly s3
+  private bucket
 
-  constructor(
-    @Inject('ACCESS_KEY_ID') private readonly accessKeyId,
-    @Inject('SECRET_ACCESS_KEY') private readonly secretAccessKey,
-    @Inject('REGION') private readonly region,
-    @Inject('BUCKET') private readonly bucket,
-  ) {
-    AWS.config.update({ accessKeyId, secretAccessKey, region})
+  constructor(private readonly configService: ConfigService) {
     this.s3 = new AWS.S3()
+
+    AWS.config.update({
+      accessKeyId: this.configService.get('aws.id'),
+      secretAccessKey: this.configService.get('aws.secret'),
+      region: this.configService.get('aws.region')
+    })
+    this.bucket = this.configService.get('aws.bucket')
   }
 
   async uploadFromBinary(file) {
