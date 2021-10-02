@@ -12,7 +12,6 @@ import { hashPassword } from '../util/cipher';
 import { CreateUsersDTO } from './dto/create.users.dto';
 
 import { randomInt } from 'crypto';
-import { RandomGenerator } from 'typeorm/util/RandomGenerator';
 import { ErrorCode } from '../http-exception.filter';
 import * as nodemailer from 'nodemailer';
 import { TokenType } from './users.type';
@@ -20,7 +19,7 @@ import { TokenType } from './users.type';
 @Injectable()
 export class UsersService {
   async create(createUsersDto: CreateUsersDTO) {
-    const { email, password } = createUsersDto;
+    const { email, password, nickname } = createUsersDto;
     const lowerCaseEmail = email.toLowerCase();
     await this.isAvailableEmail(lowerCaseEmail);
 
@@ -30,6 +29,7 @@ export class UsersService {
 
     const userInfo: any = {
       email: lowerCaseEmail,
+      nickname: nickname,
       password: encryptedPassword,
       status: UserStatus.UNCONFIRMED,
       token: token,
@@ -50,7 +50,7 @@ export class UsersService {
       port: 465,
       secure: true,
       auth: {
-        user: 'nadeulgil',
+        user: 'mashupnadeulgil@gmail.com',
         pass: process.env.MAIL_PASS,
       },
     });
@@ -62,7 +62,7 @@ export class UsersService {
         text: mail.text,
       })
       .catch((err) => {
-        throw new InternalServerErrorException(ErrorCode.INTERNAL_SERVER_ERROR);
+        throw new ServiceUnavailableException(ErrorCode.SEND_MAIL_ERROR);
       });
   }
 
@@ -72,6 +72,7 @@ export class UsersService {
 
     return true;
   }
+
   async verificationToken(token: string, tokenType: string) {
     if (tokenType === TokenType.CONFIRMED_TOKEN) {
       const user = await Users.findByToken(token);
@@ -93,6 +94,13 @@ export class UsersService {
     const token = randomInt(10000, 99999).toString();
     await Users.findByEmailAndUpdateResetPasswordToken(user.email, token);
 
+    const mail: any = {
+      to: email,
+      subject: '[나들길] 비밀번호 갱신 메일 인증',
+      text: `아래의 코드를 입력해 인증을 완료해 주세요. ${token}`,
+    };
+
+    await this.sendMail(mail)
     return user;
   }
 

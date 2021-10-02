@@ -9,7 +9,8 @@ export class CreateUsersDTO {
 
   @IsOptional()
   @IsString()
-  name: string;
+  nickname: string;
+
 }
 
 
