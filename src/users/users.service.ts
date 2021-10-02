@@ -1,4 +1,11 @@
-import {BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common'
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable, InternalServerErrorException,
+  NotFoundException,
+  ServiceUnavailableException
+} from '@nestjs/common'
 import { Users } from '../entities/users.entity';
 import {hashPassword} from '../util/cipher'
 import {CreateUsersDTO} from './dto/create.users.dto'
@@ -7,6 +14,7 @@ import {randomInt} from 'crypto'
 import {RandomGenerator} from 'typeorm/util/RandomGenerator'
 import {TokenType, UserStatus} from './users.type'
 import {ErrorCode} from '../http-exception.filter'
+import * as nodemailer from 'nodemailer'
 
 @Injectable()
 export class UsersService {
@@ -22,13 +30,39 @@ export class UsersService {
     const userInfo: any = {
       'email': lowerCaseEmail,
       'password': encryptedPassword,
-      'status': UserStatus.REGISTERED,
+      'status': UserStatus.UNCONFIRMED,
       'token': token
     }
     await Users.createUser(userInfo);
-    // 이메일을 보내야하는가?
-    // 보내야한다면 이메일 양식 템플릿 작성
+    const mail: any = {
+      'to': email,
+      'subject': '[나들길] 회원가입 메일 인증',
+      'text': `아래의 코드를 입력해 인증을 완료해 주세요. ${token}`
+    }
+    await this.sendMail(mail)
     return
+  }
+
+  private async sendMail(mail: any) {
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: 'nadeulgil',
+        pass: process.env.MAIL_PASS,
+      },
+    });
+    transporter
+      .sendMail({
+        from: 'nadeulgil@gmail.com',
+        to: mail.to,
+        subject: mail.subject,
+        text: mail.text,
+      })
+      .catch((err) => {
+        throw new InternalServerErrorException(ErrorCode.INTERNAL_SERVER_ERROR)
+      });
   }
 
   private async isAvailableEmail(email: string) {

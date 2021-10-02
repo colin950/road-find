@@ -17,5 +17,6 @@ export default () => ({
     secret: get('SECRET_ACCESS_KEY') ?? '',
     region: get('REGION') ?? '',
     bucket: get('BUCKET') ?? '',
-  }
+  },
+  mail_pass: get('MAIL_PASS') ?? ''
 });
