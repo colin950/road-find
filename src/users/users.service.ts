@@ -55,7 +55,7 @@ export class UsersService {
     });
     transporter
       .sendMail({
-        from: 'nadeulgil@gmail.com',
+        from: 'mashupnadeulgil@gmail.com',
         to: mail.to,
         subject: mail.subject,
         text: mail.text,
