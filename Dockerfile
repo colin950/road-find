@@ -7,11 +7,13 @@ EXPOSE 80
 
 COPY package.json ./
 COPY yarn.lock ./
+COPY tsconfig.json ./
+COPY tsconfig.build.json ./
+COPY nest-cli.json ./
 COPY .env ./
+COPY src ./src
 
 RUN yarn install
 RUN yarn build
-
-COPY dist ./dist
 
 CMD [ "yarn", "start:prod" ]
