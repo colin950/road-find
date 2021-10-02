@@ -41,8 +41,9 @@ export class Users extends CreatedUpdatedTime {
   @Column({ type: 'smallint', default: SnsType.EMAIL })
   snsType!: SnsType;
 
-  @Column()
-  snsId: string;
+  @Column( { nullable: true })
+  @Index({ unique: true })
+  snsId?: string;
 
   @Column({ nullable: true })
   token?: string;
