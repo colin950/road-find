@@ -42,6 +42,9 @@ export class Roads extends CreatedUpdatedTime {
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
 
+  @Column({ type: 'float', default: 0 })
+  distance?: number;
+
   // == Relations ==````
   @ManyToOne(() => Users, (user) => user.roads, {
     onDelete: 'CASCADE',
