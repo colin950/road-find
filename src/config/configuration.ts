@@ -18,5 +18,5 @@ export default () => ({
     region: get('REGION') ?? '',
     bucket: get('BUCKET') ?? '',
   },
-  mail_pass: get('MAIL_PASS') ?? ''
+  mail_pass: get('MAIL_PASS') ?? '',
 });

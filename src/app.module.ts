@@ -5,7 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import {AuthModule} from './auth/auth.module'
+import { AuthModule } from './auth/auth.module';
 import { AwsService } from './aws/aws.service';
 import { AwsModule } from './aws/aws.module';
 import configuration from './config/configuration';
