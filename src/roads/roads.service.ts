@@ -3,10 +3,9 @@ import { Categories } from 'src/entities/categories.entity';
 import { Places } from 'src/entities/places.entity';
 import { RoadSpots } from 'src/entities/road.spots.entity';
 import { Roads } from 'src/entities/roads.entity';
-import { point } from './types/point';
 import { Spot } from './types/spot';
 
-import { Point, LineString } from 'geojson';
+import { Position } from 'geojson';
 import { RoadAnalytics } from 'src/entities/road.analytics.entity';
 import { RoadImages } from 'src/entities/road.images.entity';
 import { HashTags } from 'src/entities/hashtags.entity';
@@ -21,7 +20,7 @@ export class RoadsService {
     placeCode: string,
     categoryId: number,
     roadOptions: {
-      routes: point[];
+      routes: Position[];
       spots?: Spot[] | null;
       images?: string[] | null;
       hashtags?: string[] | null;
@@ -61,7 +60,9 @@ export class RoadsService {
           const hashTag = new HashTags();
           hashTag.name = hashtag;
           return hashTag;
-        }) ?? null;
+        }) ?? [];
+
+    const getAndCreatedHashTags = [...getHashTags, ...createdHashTags];
 
     // 길 분석 엔티티 객체를 생성합니다.
     const createRoadAnalytics = new RoadAnalytics();
@@ -79,7 +80,7 @@ export class RoadsService {
     createRoad.place = place!;
     createRoad.category = category!;
     createRoad.images = createImages;
-    createRoad.hashtags = createdHashTags;
+    createRoad.hashtags = getAndCreatedHashTags;
     createRoad.roadAnalytics = createRoadAnalytics;
     await createRoad.save();
 

@@ -41,7 +41,7 @@ export class Roads extends CreatedUpdatedTime {
   deletedAt?: Date;
 
   @Column({ type: 'float', default: 0 })
-  distance?: number;
+  distance: number;
 
   // == Relations ==````
   @ManyToOne(() => Users, (user) => user.roads, {

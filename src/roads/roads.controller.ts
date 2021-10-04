@@ -11,6 +11,7 @@ import { Roads } from 'src/entities/roads.entity';
 import { CommonResponse } from 'src/util/interceptors/common.response.interceptor';
 
 import { CreateRoadRequestDto } from './dto/create-road.request.dto';
+import { CreateRoadResponseDto } from './dto/create-road.response.dto';
 import { CategoryValidationPipe } from './pipe/category.validaiton.pipe';
 import { PlaceValidationPipe } from './pipe/place.validaiton.pipe';
 import { RoadsService } from './roads.service';
@@ -26,7 +27,7 @@ export class RoadsController {
     @UploadedFiles() files: Array<MulterFile> | null,
     @Body(new CategoryValidationPipe(), new PlaceValidationPipe())
     createRoadRequestDto: CreateRoadRequestDto,
-  ): Promise<CommonResponse<Roads>> {
+  ): Promise<CommonResponse<CreateRoadResponseDto>> {
     const imageLocations: string[] | null =
       files?.map((file: MulterFile) => {
         return `https://${STORAGE_DOMAIN}/${file.key}`;
@@ -54,7 +55,7 @@ export class RoadsController {
     return {
       resCode: 'SUCCESS_CREATE_ROAD',
       message: '성공적으로 길을 생성했습니다.',
-      data: createRoad,
+      data: CreateRoadResponseDto.fromRoad(createRoad),
     };
   }
 }

@@ -1,7 +1,7 @@
-import { point } from './point';
+import { Position } from 'geojson';
 
 export interface Spot {
   title: string;
   content: string;
-  point: point;
+  point: Position;
 }

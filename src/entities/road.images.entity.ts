@@ -13,9 +13,9 @@ export class RoadImages extends CreatedUpdatedTime {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id!: number;
 
-  @Column({ nullable: true })
+  @Column()
   @Index()
-  imageUrl?: string;
+  imageUrl!: string;
 
   // == Relations ==````
   @ManyToOne(() => Roads, (road) => road.images, {

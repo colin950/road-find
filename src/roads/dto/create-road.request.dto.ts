@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator';
-import { point } from '../types/point';
+import { Position } from 'geojson';
 import { Spot } from '../types/spot';
 
 export class CreateRoadRequestDto {
@@ -23,7 +23,7 @@ export class CreateRoadRequestDto {
   @ApiProperty()
   @IsArray()
   @IsNotEmpty()
-  routes: point[];
+  routes: Position[];
 
   @ApiProperty({ type: Number })
   @IsNumber()
