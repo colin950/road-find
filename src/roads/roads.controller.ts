@@ -10,7 +10,7 @@ import { STORAGE_DOMAIN } from 'src/constants';
 import { Roads } from 'src/entities/roads.entity';
 import { CommonResponse } from 'src/util/interceptors/common.response.interceptor';
 
-import { CreateRoadRequestDto } from './dto/create-road.request.dto copy';
+import { CreateRoadRequestDto } from './dto/create-road.request.dto';
 import { CategoryValidationPipe } from './pipe/category.validaiton.pipe';
 import { PlaceValidationPipe } from './pipe/place.validaiton.pipe';
 import { RoadsService } from './roads.service';
@@ -27,19 +27,28 @@ export class RoadsController {
     @Body(new CategoryValidationPipe(), new PlaceValidationPipe())
     createRoadRequestDto: CreateRoadRequestDto,
   ): Promise<CommonResponse<Roads>> {
-    const imageLocations: string[] = files?.map((file: MulterFile) => {
-      return `https://${STORAGE_DOMAIN}/${file.key}`;
-    });
+    const imageLocations: string[] | null =
+      files?.map((file: MulterFile) => {
+        return `https://${STORAGE_DOMAIN}/${file.key}`;
+      }) ?? null;
+
+    const filteredHashtags: string[] | null =
+      createRoadRequestDto.hashtags?.map((hashtag) =>
+        hashtag.replace(/#|\s/g, '').trim(),
+      ) ?? null;
 
     const createRoad: Roads = await this.roadsService.createRoad(
       createRoadRequestDto.title,
       createRoadRequestDto.content,
-      createRoadRequestDto.routes,
-      createRoadRequestDto.spots,
       createRoadRequestDto.distance,
       createRoadRequestDto.placeCode,
       createRoadRequestDto.categoryId,
-      imageLocations,
+      {
+        routes: createRoadRequestDto.routes,
+        spots: createRoadRequestDto.spots,
+        images: imageLocations,
+        hashtags: filteredHashtags,
+      },
     );
 
     return {

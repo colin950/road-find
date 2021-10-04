@@ -22,6 +22,5 @@ export class HashTags extends CreatedUpdatedTime {
   @ManyToMany(() => Roads, {
     onDelete: 'CASCADE',
   })
-  @JoinTable()
   roads?: Roads;
 }

@@ -44,4 +44,9 @@ export class CreateRoadRequestDto {
   @IsOptional()
   @IsArray()
   spots: Spot[] | null;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString({ each: true })
+  hashtags: string[] | null;
 }

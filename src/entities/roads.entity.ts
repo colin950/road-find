@@ -5,6 +5,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -56,12 +57,14 @@ export class Roads extends CreatedUpdatedTime {
   @ManyToOne(() => Categories, (category) => category.roads, {
     onDelete: 'SET NULL',
   })
-  category!: Categories;
+  category!: Categories | null;
 
   @ManyToMany(() => HashTags, {
-    onDelete: 'CASCADE',
+    cascade: true,
+    onDelete: 'SET NULL',
   })
-  hashtags?: HashTags[];
+  @JoinTable()
+  hashtags?: HashTags[] | null;
 
   @OneToOne(() => RoadAnalytics, {
     eager: true,

@@ -1,4 +1,5 @@
 import { Geometry } from 'geojson';
+import { Spot } from 'src/roads/types/spot';
 import {
   Column,
   DeleteDateColumn,
@@ -29,9 +30,23 @@ export class RoadSpots extends CreatedUpdatedTime {
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
 
-  // == Relations ==````
+  // == Relations ==
   @ManyToOne(() => Roads, (road) => road.spots, {
     onDelete: 'CASCADE',
   })
   road!: Roads;
+
+  // == Static methods ===
+  static fromSpot(spot: Spot) {
+    const roadSpot = new RoadSpots();
+
+    roadSpot.title = spot.title;
+    roadSpot.content = spot.content;
+    roadSpot.point = {
+      type: 'Point',
+      coordinates: [spot.point[0], spot.point[1]],
+    };
+
+    return roadSpot;
+  }
 }
