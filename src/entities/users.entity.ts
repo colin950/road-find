@@ -115,7 +115,8 @@ export class Users extends CreatedUpdatedTime {
         confirmedAt: new Date(),
         status: UserStatus.REGISTERED,
       })
-      .where({ token: token });
+      .where({ token: token })
+      .execute();
   }
 
   static async findByEmailAndUpdateResetPasswordToken(
@@ -125,13 +126,15 @@ export class Users extends CreatedUpdatedTime {
     return this.createQueryBuilder()
       .update(Users)
       .set({ resetPasswordToken: token })
-      .where({ email: email });
+      .where({ email: email })
+      .execute();
   }
 
   static async findByEmailAndUpdatePassword(email: string, password: any) {
     return this.createQueryBuilder()
       .update(Users)
       .set({ password: password })
-      .where({ email: email });
+      .where({ email: email })
+      .execute();
   }
 }

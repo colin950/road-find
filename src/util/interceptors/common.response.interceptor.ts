@@ -22,11 +22,19 @@ export class CommonResponseInterceptor<T>
     next: CallHandler,
   ): Observable<CommonResponse<T>> {
     return next.handle().pipe(
-      map((data) => ({
-        resCode: data.resCode,
-        message: data.message,
-        data: data.data,
-      })),
+      map((data) => {
+        if ('resCode' in data) {
+          return {
+            resCode: data.resCode,
+            message: data.message,
+            data: data.data,
+          };
+        } else {
+          // for different response formats
+          // TODO: throw an error against invalid format
+          return data;
+        }
+      }),
     );
   }
 }

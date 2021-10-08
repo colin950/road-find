@@ -2,24 +2,19 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
-  ServiceUnavailableException,
   UnauthorizedException,
-} from '@nestjs/common'
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
 import { Users, UserStatus } from '../entities/users.entity';
-import { LoginUserDTO } from '../users/dto/login.users.dto';
 import { isHashValid } from '../util/cipher';
 import { ErrorCode } from '../util/interceptors/http-exception.filter';
+import { AuthUser, JwtPayload } from './auth.types';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private jwtService: JwtService) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<AuthUser | null> {
     const user = await Users.findByEmail(email);
     if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_EMAIL);
 
@@ -28,17 +23,18 @@ export class AuthService {
 
     const isPasswordValid = await isHashValid(pass, user.password);
 
-    if (!isPasswordValid) throw new BadRequestException(ErrorCode.INVALID_PASSWORD)
+    if (!isPasswordValid)
+      throw new BadRequestException(ErrorCode.INVALID_PASSWORD);
 
     if (user && isPasswordValid) {
       const { password, ...result } = user;
-      return result;
+      return result as AuthUser;
     }
     return null;
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+  async login(user: AuthUser) {
+    const payload: JwtPayload = { email: user.email, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

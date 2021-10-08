@@ -15,6 +15,7 @@ export enum ErrorCode {
   NOT_FOUND_TOKEN = 'NOT_FOUND_TOKEN',
   INTERNAL_SERVER_ERROR = 'internal_server_error',
   SEND_MAIL_ERROR = 'send_mail_error',
+  NOT_FOUND_USER = 'not_found_user',
 }
 
 @Catch(HttpException)

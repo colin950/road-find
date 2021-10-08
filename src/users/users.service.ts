@@ -1,16 +1,11 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { Users, UserStatus } from '../entities/users.entity';
 import { hashPassword } from '../util/cipher';
-import { CreateUsersDTO } from './dto/create.users.dto';
-
 import { randomInt } from 'crypto';
 import { ErrorCode } from '../util/interceptors/http-exception.filter';
 import * as nodemailer from 'nodemailer';
@@ -18,8 +13,7 @@ import { TokenType } from './users.type';
 
 @Injectable()
 export class UsersService {
-  async create(createUsersDto: CreateUsersDTO) {
-    const { email, password, nickname } = createUsersDto;
+  async create(email: string, password: string, nickname: string) {
     const lowerCaseEmail = email.toLowerCase();
     await this.isAvailableEmail(lowerCaseEmail);
 
