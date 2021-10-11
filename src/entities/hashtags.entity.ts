@@ -1,8 +1,8 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   Index,
-  JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -18,9 +18,12 @@ export class HashTags extends CreatedUpdatedTime {
   @Index({ unique: true })
   name!: string;
 
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
+
   // == Relations ==
   @ManyToMany(() => Roads, {
-    onDelete: 'CASCADE',
+    onDelete: 'NO ACTION',
   })
-  roads?: Roads;
+  roads?: Roads[];
 }

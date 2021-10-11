@@ -231,7 +231,7 @@ export class RoadsService {
       throw new Error('수정 권한이 없습니다!');
     }
 
-    await updateRoad.remove();
+    await updateRoad.softRemove();
     return true;
   }
 }

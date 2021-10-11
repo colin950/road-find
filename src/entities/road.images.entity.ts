@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   Index,
   ManyToOne,
@@ -16,6 +17,9 @@ export class RoadImages extends CreatedUpdatedTime {
   @Column()
   @Index()
   imageUrl!: string;
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;
 
   // == Relations ==````
   @ManyToOne(() => Roads, (road) => road.images, {
