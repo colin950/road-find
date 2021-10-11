@@ -218,4 +218,20 @@ export class RoadsService {
     await updateRoad.save();
     return updateRoad;
   }
+
+  async deleteRoad(user: Users, roadId: number): Promise<boolean> {
+    const updateRoad: Roads | undefined = await Roads.findOne(roadId);
+
+    if (!updateRoad) {
+      throw new Error('해당하는 길이 존재하지 않습니다!');
+    }
+
+    // 수정 권한을 확인합니다.
+    if (updateRoad.user.id !== user.id) {
+      throw new Error('수정 권한이 없습니다!');
+    }
+
+    await updateRoad.remove();
+    return true;
+  }
 }

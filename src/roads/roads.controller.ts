@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Param,
   Post,
   Put,
@@ -113,6 +114,24 @@ export class RoadsController {
       resCode: 'SUCCESS_UPDATE_ROAD',
       message: '성공적으로 길을 수정했습니다.',
       data: CreateRoadResponseDTO.fromRoad(updateRoad),
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteRoad(
+    @User() user: Users,
+    @Param('id') roadId: string,
+  ): Promise<CommonResponse<boolean>> {
+    const isRemoved: boolean = await this.roadsService.deleteRoad(
+      user,
+      Number(roadId),
+    );
+
+    return {
+      resCode: 'SUCCESS_DELETE_ROAD',
+      message: '성공적으로 길을 삭제했습니다.',
+      data: isRemoved,
     };
   }
 }
