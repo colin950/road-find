@@ -46,20 +46,24 @@ export class Roads extends CreatedUpdatedTime {
   // == Relations ==````
   @ManyToOne(() => Users, (user) => user.roads, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   user!: Users;
 
   @ManyToOne(() => Places, {
+    eager: true,
     onDelete: 'SET NULL',
   })
-  place!: Places;
+  place!: Places | null;
 
   @ManyToOne(() => Categories, (category) => category.roads, {
+    eager: true,
     onDelete: 'SET NULL',
   })
   category!: Categories | null;
 
   @ManyToMany(() => HashTags, {
+    eager: true,
     cascade: true,
     onDelete: 'SET NULL',
   })
@@ -74,11 +78,13 @@ export class Roads extends CreatedUpdatedTime {
   roadAnalytics!: RoadAnalytics;
 
   @OneToMany(() => RoadSpots, (spot) => spot.road, {
+    eager: true,
     cascade: true,
   })
   spots: RoadSpots[] | null;
 
   @OneToMany(() => RoadImages, (image) => image.road, {
+    eager: true,
     cascade: true,
   })
   images: RoadImages[] | null;

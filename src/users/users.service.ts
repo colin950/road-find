@@ -10,9 +10,12 @@ import { randomInt } from 'crypto';
 import { ErrorCode } from '../util/interceptors/http-exception.filter';
 import * as nodemailer from 'nodemailer';
 import { TokenType } from './users.type';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
+  constructor(private configService: ConfigService) {}
+
   async create(email: string, password: string, nickname: string) {
     const lowerCaseEmail = email.toLowerCase();
     await this.isAvailableEmail(lowerCaseEmail);
@@ -44,20 +47,28 @@ export class UsersService {
       port: 465,
       secure: true,
       auth: {
+        type: 'OAuth2',
         user: 'mashupnadeulgil@gmail.com',
-        pass: process.env.MAIL_PASS,
+        clientId: this.configService.get('gmail.clientId'),
+        clientSecret: this.configService.get('gmail.clientSecret'),
+        accessToken: this.configService.get('gmail.accessToken'),
+        refreshToken: this.configService.get('gmail.refreshToken'),
+        expires: 3600,
       },
     });
-    transporter
-      .sendMail({
+
+    try {
+      await transporter.sendMail({
         from: 'mashupnadeulgil@gmail.com',
         to: mail.to,
         subject: mail.subject,
         text: mail.text,
-      })
-      .catch((err) => {
-        throw new ServiceUnavailableException(ErrorCode.SEND_MAIL_ERROR);
       });
+
+      transporter.close();
+    } catch (err) {
+      throw new ServiceUnavailableException(ErrorCode.SEND_MAIL_ERROR);
+    }
   }
 
   private async isAvailableEmail(email: string) {
@@ -67,7 +78,7 @@ export class UsersService {
     return true;
   }
 
-  async verificationToken(token: string, tokenType: string) {
+  async verificationToken(token: string, tokenType: string): Promise<boolean> {
     if (tokenType === TokenType.CONFIRMED_TOKEN) {
       const user = await Users.findByToken(token);
       if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_TOKEN);
@@ -78,10 +89,10 @@ export class UsersService {
       const user = await Users.findByResetPasswordToken(token);
       if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_TOKEN);
     }
-    return;
+    return true;
   }
 
-  async requestResetPassword(email: string) {
+  async requestResetPassword(email: string): Promise<boolean> {
     const user = await Users.findByEmail(email);
     if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_EMAIL);
 
@@ -95,11 +106,12 @@ export class UsersService {
     };
 
     await this.sendMail(mail);
-    return user;
+    return true;
   }
 
-  async resetPassword(email: string, password: string) {
+  async resetPassword(email: string, password: string): Promise<boolean> {
     const encryptedPassword = await hashPassword(password);
     await Users.findByEmailAndUpdatePassword(email, encryptedPassword);
+    return true;
   }
 }

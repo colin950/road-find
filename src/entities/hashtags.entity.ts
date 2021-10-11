@@ -18,7 +18,7 @@ export class HashTags extends CreatedUpdatedTime {
   @Index({ unique: true })
   name!: string;
 
-  // == Relations ==````
+  // == Relations ==
   @ManyToMany(() => Roads, {
     onDelete: 'CASCADE',
   })

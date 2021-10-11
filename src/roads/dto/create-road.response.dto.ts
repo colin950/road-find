@@ -10,7 +10,7 @@ import { LineString, Point, Position } from 'geojson';
 import { Roads } from 'src/entities/roads.entity';
 import { Spot } from '../types/spot';
 
-export class CreateRoadResponseDto {
+export class CreateRoadResponseDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -34,12 +34,12 @@ export class CreateRoadResponseDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  place: string;
+  place: string | null;
 
   @ApiProperty({ type: Number })
   @IsNumber()
   @IsNotEmpty()
-  category: string;
+  category: string | null;
 
   @ApiProperty()
   @IsOptional()
@@ -57,14 +57,14 @@ export class CreateRoadResponseDto {
   hashtags: string[] | null;
 
   // == Static methods ==
-  static fromRoad(road: Roads): CreateRoadResponseDto {
-    const createRoadResponseDto = new CreateRoadResponseDto();
+  static fromRoad(road: Roads): CreateRoadResponseDTO {
+    const createRoadResponseDto = new CreateRoadResponseDTO();
 
     createRoadResponseDto.title = road.title;
     createRoadResponseDto.content = road.content;
     createRoadResponseDto.distance = road.distance;
-    createRoadResponseDto.place = road.place!.fullAddress;
-    createRoadResponseDto.category = road.category!.key;
+    createRoadResponseDto.place = road.place?.fullAddress ?? null;
+    createRoadResponseDto.category = road.category?.key ?? null;
 
     createRoadResponseDto.routes = (road.routes as LineString).coordinates;
     createRoadResponseDto.spots =

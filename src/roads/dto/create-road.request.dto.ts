@@ -9,7 +9,7 @@ import {
 import { Position } from 'geojson';
 import { Spot } from '../types/spot';
 
-export class CreateRoadRequestDto {
+export class CreateRoadRequestDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

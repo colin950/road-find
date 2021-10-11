@@ -9,6 +9,7 @@ import { Users, UserStatus } from '../entities/users.entity';
 import { isHashValid } from '../util/cipher';
 import { ErrorCode } from '../util/interceptors/http-exception.filter';
 import { AuthUser, JwtPayload } from './auth.types';
+import { AccessTokenDTO } from './dto/access.token.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,10 +34,10 @@ export class AuthService {
     return null;
   }
 
-  async login(user: AuthUser) {
+  login(user: AuthUser): AccessTokenDTO {
     const payload: JwtPayload = { email: user.email, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 }

@@ -18,5 +18,10 @@ export default () => ({
     region: get('REGION') ?? '',
     bucket: get('BUCKET') ?? '',
   },
-  mail_pass: get('MAIL_PASS') ?? '',
+  gmail: {
+    clientId: get('GMAIL_CLIENT_ID') ?? '',
+    clientSecret: get('GMAIL_CLIENT_SECRET') ?? '',
+    accessToken: get('GMAIL_ACCESS_TOKEN') ?? '',
+    refreshToken: get('GMAIL_REFRESH_TOKEN') ?? '',
+  },
 });

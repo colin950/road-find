@@ -88,7 +88,7 @@ export class Users extends CreatedUpdatedTime {
   bookmarks: Roads[];
 
   static async createUser(user: any) {
-    return this.createQueryBuilder()
+    return await this.createQueryBuilder()
       .insert()
       .into(Users)
       .values(user)
@@ -96,19 +96,19 @@ export class Users extends CreatedUpdatedTime {
   }
 
   static async findByEmail(email: string) {
-    return this.findOne({ email: email });
+    return await this.findOne({ email: email });
   }
 
   static async findByToken(token: string) {
-    return this.findOne({ token: token });
+    return await this.findOne({ token: token });
   }
 
   static async findByResetPasswordToken(token: string) {
-    return this.findOne({ resetPasswordToken: token });
+    return await this.findOne({ resetPasswordToken: token });
   }
 
   static async findByTokenAndUpdateRegistered(token: string) {
-    return this.createQueryBuilder()
+    return await this.createQueryBuilder()
       .update(Users)
       .set({
         token: '',
@@ -123,7 +123,7 @@ export class Users extends CreatedUpdatedTime {
     email: string,
     token: string,
   ) {
-    return this.createQueryBuilder()
+    return await this.createQueryBuilder()
       .update(Users)
       .set({ resetPasswordToken: token })
       .where({ email: email })
@@ -131,7 +131,7 @@ export class Users extends CreatedUpdatedTime {
   }
 
   static async findByEmailAndUpdatePassword(email: string, password: any) {
-    return this.createQueryBuilder()
+    return await this.createQueryBuilder()
       .update(Users)
       .set({ password: password })
       .where({ email: email })

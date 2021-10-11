@@ -23,6 +23,8 @@ export class CommonResponseInterceptor<T>
   ): Observable<CommonResponse<T>> {
     return next.handle().pipe(
       map((data) => {
+        data ??= {};
+
         if ('resCode' in data) {
           return {
             resCode: data.resCode,
