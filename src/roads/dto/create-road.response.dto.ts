@@ -12,6 +12,11 @@ import { Spot } from '../types/spot';
 
 export class CreateRoadResponseDTO {
   @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -60,6 +65,7 @@ export class CreateRoadResponseDTO {
   static fromRoad(road: Roads): CreateRoadResponseDTO {
     const createRoadResponseDto = new CreateRoadResponseDTO();
 
+    createRoadResponseDto.id = road.id;
     createRoadResponseDto.title = road.title;
     createRoadResponseDto.content = road.content;
     createRoadResponseDto.distance = road.distance;

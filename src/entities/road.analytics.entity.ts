@@ -14,13 +14,19 @@ export class RoadAnalytics extends CreatedUpdatedTime {
   id!: number;
 
   @Column({ type: 'smallint', default: 0 })
-  emojiGoodCount!: number;
+  emojiHeartCount!: number;
+
+  @Column({ type: 'smallint', default: 0 })
+  emojiThumbsUpCount!: number;
+
+  @Column({ type: 'smallint', default: 0 })
+  emojiLaughCount!: number;
+
+  @Column({ type: 'smallint', default: 0 })
+  emojiSurpiseCount!: number;
 
   @Column({ type: 'smallint', default: 0 })
   emojiSadCount!: number;
-
-  @Column({ type: 'smallint', default: 0 })
-  emojiMadCount!: number;
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;

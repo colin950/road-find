@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Categories } from 'src/entities/categories.entity';
 import { Places } from 'src/entities/places.entity';
 import { RoadSpots } from 'src/entities/road.spots.entity';
@@ -9,8 +9,9 @@ import { Position } from 'geojson';
 import { RoadAnalytics } from 'src/entities/road.analytics.entity';
 import { RoadImages } from 'src/entities/road.images.entity';
 import { HashTags } from 'src/entities/hashtags.entity';
-import { In } from 'typeorm';
+import { Equal, FindOperator, In, LessThan, MoreThan } from 'typeorm';
 import { Users } from 'src/entities/users.entity';
+import { direction } from './dto/get-roads.request.dto';
 
 @Injectable()
 export class RoadsService {
@@ -233,5 +234,95 @@ export class RoadsService {
 
     await updateRoad.softRemove();
     return true;
+  }
+
+  async getRoadById(roadId: number): Promise<Roads> {
+    const roadById = await Roads.findOne(roadId);
+
+    if (!roadById) {
+      throw new HttpException(
+        {
+          resCode: 'NOT_FOUND_ROAD',
+          message: '해당하는 길이 존재하지 않습니다!',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return roadById;
+  }
+
+  async getRoadsByCategory(
+    categoryId: number,
+    findOptions?: {
+      lastId?: number;
+      limit?: number;
+      direction?: direction;
+    },
+  ): Promise<Roads[]> {
+    const whereOptions: Record<string, FindOperator<number>> = {
+      category: Equal(categoryId),
+    };
+
+    if (findOptions && findOptions.lastId) {
+      findOptions.direction ||= 'backward';
+      if (findOptions.direction === 'backward') {
+        whereOptions.id = LessThan(findOptions.lastId);
+      } else if (findOptions.direction === 'forward') {
+        whereOptions.id = MoreThan(findOptions.lastId);
+      }
+    }
+
+    let takeLimitation = 10;
+    if (findOptions && findOptions.limit && findOptions.limit > 0) {
+      takeLimitation = findOptions.limit;
+    }
+
+    const roads = await Roads.find({
+      where: whereOptions,
+      take: takeLimitation,
+      order: {
+        id: 'DESC',
+      },
+    });
+
+    return roads;
+  }
+
+  async getRoadsByPlaceCode(
+    placeCode: string,
+    findOptions?: {
+      lastId?: number;
+      limit?: number;
+      direction?: direction;
+    },
+  ): Promise<Roads[]> {
+    const whereOptions: Record<string, FindOperator<number | string>> = {
+      place: Equal(placeCode),
+    };
+
+    if (findOptions && findOptions.lastId) {
+      findOptions.direction ||= 'backward';
+      if (findOptions.direction === 'backward') {
+        whereOptions.id = LessThan(findOptions.lastId);
+      } else if (findOptions.direction === 'forward') {
+        whereOptions.id = MoreThan(findOptions.lastId);
+      }
+    }
+
+    let takeLimitation = 10;
+    if (findOptions && findOptions.limit && findOptions.limit > 0) {
+      takeLimitation = findOptions.limit;
+    }
+
+    const roads = await Roads.find({
+      where: whereOptions,
+      take: takeLimitation,
+      order: {
+        id: 'DESC',
+      },
+    });
+
+    return roads;
   }
 }

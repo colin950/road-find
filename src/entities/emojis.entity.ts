@@ -9,7 +9,4 @@ export class Emojis extends CreatedUpdatedTime {
   @Column({ type: 'varchar', length: 45, default: '' })
   @Index({ unique: true })
   key!: string;
-
-  @Column({ name: 'varchar', length: 4, default: '' })
-  emoji!: string;
 }

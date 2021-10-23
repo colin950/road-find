@@ -2,9 +2,11 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Put,
+  Query,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -19,6 +21,9 @@ import { CommonResponse } from 'src/util/interceptors/common.response.intercepto
 
 import { CreateRoadRequestDTO } from './dto/create-road.request.dto';
 import { CreateRoadResponseDTO } from './dto/create-road.response.dto';
+import { GetRoadResponseDTO } from './dto/get-road.response.dto';
+import { GetRoadsRequestDTO } from './dto/get-roads.request.dto';
+import { GetRoadsResponseDTO } from './dto/get-roads.response.dto';
 import { UpdateRoadRequestDTO } from './dto/update-road.request.dto';
 import { CategoryValidationPipe } from './pipe/category.validaiton.pipe';
 import { PlaceValidationPipe } from './pipe/place.validaiton.pipe';
@@ -26,10 +31,10 @@ import { RoadsService } from './roads.service';
 import { MulterFile } from './types/file';
 
 @Controller('roads')
+@UseGuards(JwtAuthGuard)
 export class RoadsController {
   constructor(private readonly roadsService: RoadsService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post('')
   @UseInterceptors(FilesInterceptor('files'))
   async createRoad(
@@ -72,7 +77,6 @@ export class RoadsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Put(':id')
   @UseInterceptors(FilesInterceptor('files'))
   async updateRoad(
@@ -117,7 +121,6 @@ export class RoadsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async deleteRoad(
     @User() user: Users,
@@ -132,6 +135,50 @@ export class RoadsController {
       resCode: 'SUCCESS_DELETE_ROAD',
       message: '성공적으로 길을 삭제했습니다.',
       data: isRemoved,
+    };
+  }
+
+  @Get(':id')
+  async getRoadById(
+    @User() user: Users,
+    @Param('id') roadId: string,
+  ): Promise<CommonResponse<GetRoadResponseDTO>> {
+    const getRoad = await this.roadsService.getRoadById(Number(roadId));
+
+    return {
+      resCode: 'SUCCESS_GET_ROAD_BY_ID',
+      message: '성공적으로 길을 조회했습니다.',
+      data: GetRoadResponseDTO.fromRoad(getRoad),
+    };
+  }
+
+  @Get('')
+  async getRoads(
+    @User() user: Users,
+    @Query() getRoadsRequestDTO: GetRoadsRequestDTO,
+  ): Promise<CommonResponse<GetRoadsResponseDTO | null>> {
+    const { placeCode, categoryId, lastId, limit, direction } =
+      getRoadsRequestDTO;
+
+    let getRoadsOrNull: Roads[] | null = null;
+    if (categoryId) {
+      getRoadsOrNull = await this.roadsService.getRoadsByCategory(categoryId, {
+        direction,
+        lastId,
+        limit,
+      });
+    } else if (placeCode) {
+      getRoadsOrNull = await this.roadsService.getRoadsByPlaceCode(placeCode, {
+        direction,
+        lastId,
+        limit,
+      });
+    }
+
+    return {
+      resCode: 'SUCCESS_GET_ROADS_BY_ID',
+      message: '성공적으로 길을 조회했습니다.',
+      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull),
     };
   }
 }
