@@ -15,9 +15,11 @@ export class Places extends CreatedUpdatedTime {
   @PrimaryColumn({ length: 7 })
   code!: string;
 
+  @Index({ unique: true })
   @Column({ default: '' })
   fullAddress!: string;
 
+  @Index()
   @Column({ default: '' })
   name!: string;
 

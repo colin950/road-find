@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { AwsService } from './aws/aws.service';
 import { AwsModule } from './aws/aws.module';
 import { RoadsModule } from './roads/roads.module';
+import { PlacesModule } from './places/places.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -39,6 +40,7 @@ import configuration from './config/configuration';
     AuthModule,
     AwsModule,
     RoadsModule,
+    PlacesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AwsService],
