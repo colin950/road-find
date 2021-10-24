@@ -1,13 +1,11 @@
 import { Controller, Get, UseGuards, Query } from '@nestjs/common';
 import { PlacesService } from './places.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CommonResponse } from 'src/util/interceptors/common.response.interceptor';
 import { GetPlacesResponseDTO } from './dto/get.places.response.dto';
 import { GetPlacesRequestDTO } from './dto/get.places.request.dto';
 import { Places } from 'src/entities/places.entity';
 
 @Controller('places')
-@UseGuards(JwtAuthGuard)
 export class PlacesController {
   constructor(private readonly placesService: PlacesService) {}
 

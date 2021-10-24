@@ -31,12 +31,12 @@ import { RoadsService } from './roads.service';
 import { MulterFile } from './types/file';
 
 @Controller('roads')
-@UseGuards(JwtAuthGuard)
 export class RoadsController {
   constructor(private readonly roadsService: RoadsService) {}
 
   @Post('')
   @UseInterceptors(FilesInterceptor('files'))
+  @UseGuards(JwtAuthGuard)
   async createRoad(
     @User() user: Users,
     @Body(new CategoryValidationPipe(), new PlaceValidationPipe())
@@ -79,6 +79,7 @@ export class RoadsController {
 
   @Put(':id')
   @UseInterceptors(FilesInterceptor('files'))
+  @UseGuards(JwtAuthGuard)
   async updateRoad(
     @User() user: Users,
     @Param('id') roadId: string,
@@ -122,6 +123,7 @@ export class RoadsController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deleteRoad(
     @User() user: Users,
     @Param('id') roadId: string,
@@ -140,7 +142,6 @@ export class RoadsController {
 
   @Get(':id')
   async getRoadById(
-    @User() user: Users,
     @Param('id') roadId: string,
   ): Promise<CommonResponse<GetRoadResponseDTO>> {
     const getRoad = await this.roadsService.getRoadById(Number(roadId));
@@ -154,7 +155,6 @@ export class RoadsController {
 
   @Get('')
   async getRoads(
-    @User() user: Users,
     @Query() getRoadsRequestDTO: GetRoadsRequestDTO,
   ): Promise<CommonResponse<GetRoadsResponseDTO | null>> {
     const { placeCode, categoryId, lastId, limit, direction } =
