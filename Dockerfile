@@ -1,6 +1,6 @@
-FROM node:14.17.5-alpine3.14
+FROM node:14-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ENV PORT 80
 EXPOSE 80
