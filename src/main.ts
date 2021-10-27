@@ -9,6 +9,7 @@ import { CommonResponseInterceptor } from './util/interceptors/common.response.i
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
 
   app.useGlobalPipes(
     new ValidationPipe({
