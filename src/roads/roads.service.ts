@@ -38,13 +38,14 @@ export class RoadsService {
         return RoadSpots.fromSpot(spot);
       }) ?? null;
 
-    // 이미지 주소 배열을 RoadImages 엔티티 객체로 변환합니다.
-    const createImages: RoadImages[] | null =
-      roadOptions.images?.map((image) => {
-        const roadImage = new RoadImages();
-        roadImage.imageUrl = image;
-        return roadImage;
-      }) ?? null;
+    // 이미지 URL 배열로 RoadImages 엔티티 배열을 가져옵니다.
+    const getRoadImages = roadOptions.images
+      ? await RoadImages.find({
+          where: {
+            imageUrl: In(roadOptions.images),
+          },
+        })
+      : [];
 
     // 해시 태그 배열을 HashTags 엔티티 객체로 변환합니다.
     const getHashTags = roadOptions.hashtags
@@ -82,7 +83,7 @@ export class RoadsService {
     createRoad.distance = distance;
     createRoad.place = place!;
     createRoad.category = category!;
-    createRoad.images = createImages;
+    createRoad.images = getRoadImages;
     createRoad.hashtags =
       getAndCreatedHashTags.length > 0 ? getAndCreatedHashTags : null;
     createRoad.roadAnalytics = createRoadAnalytics;
@@ -104,7 +105,6 @@ export class RoadsService {
       routes?: Position[];
       spots?: Spot[] | null;
       images?: string[] | null;
-      deletedImages?: string[] | null;
       hashtags?: string[] | null;
     },
   ): Promise<Roads> {
@@ -172,23 +172,35 @@ export class RoadsService {
     }
 
     // 이미지 주소 배열을 RoadImages 엔티티 객체로 변환하여 추가합니다.
-    if (updateRoad.images) {
-      const createImages: RoadImages[] | null =
-        roadOptions?.images?.map((image) => {
-          const roadImage = new RoadImages();
-          roadImage.imageUrl = image;
-          return roadImage;
-        }) ?? null;
+    if (roadOptions?.images) {
+      const beforeRoadImages = updateRoad.images ?? [];
+      const beforeRoadImageURLs = beforeRoadImages.map(
+        (roadImage) => roadImage.imageUrl,
+      );
 
-      updateRoad.images.push(...(createImages ?? []));
-    }
+      const afterRoadImageURLs = roadOptions.images ?? [];
 
-    // 삭제할 이미지 주소 배열로 연결된 RoadImages 객체를 삭제합니다.
-    if (roadOptions?.deletedImages) {
-      updateRoad.images =
-        updateRoad.images?.filter((image) => {
-          return roadOptions.deletedImages?.includes(image.imageUrl) === false;
-        }) ?? null;
+      const concatRoadImages = beforeRoadImageURLs.concat(afterRoadImageURLs);
+
+      const getCurrentRoadImages = await RoadImages.find({
+        where: {
+          imageUrl: In(concatRoadImages),
+        },
+      });
+
+      const updateRoadImages = getCurrentRoadImages.filter((roadImage) => {
+        return afterRoadImageURLs.includes(roadImage.imageUrl);
+      });
+
+      const deletedRoadImages = getCurrentRoadImages.filter((roadImage) => {
+        return afterRoadImageURLs.includes(roadImage.imageUrl) === false;
+      });
+
+      for (const deletedRoadImage of deletedRoadImages) {
+        await deletedRoadImage.softRemove();
+      }
+
+      updateRoad.images = updateRoadImages;
     }
 
     // 해시 태그 배열을 HashTags 엔티티 객체로 변환합니다.
@@ -324,5 +336,20 @@ export class RoadsService {
     });
 
     return roads;
+  }
+
+  async createRoadImages(
+    imageLocations: string[] | null,
+  ): Promise<RoadImages[] | null> {
+    // 이미지 주소 배열을 RoadImages 엔티티 객체로 변환합니다.
+    const createImages: RoadImages[] | null =
+      imageLocations?.map((image) => {
+        const roadImage = new RoadImages();
+        roadImage.imageUrl = image;
+        roadImage.save();
+        return roadImage;
+      }) ?? null;
+
+    return createImages;
   }
 }

@@ -22,8 +22,6 @@ export class RoadImages extends CreatedUpdatedTime {
   deletedAt?: Date;
 
   // == Relations ==````
-  @ManyToOne(() => Roads, (road) => road.images, {
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => Roads, (road) => road.images)
   road!: Roads;
 }

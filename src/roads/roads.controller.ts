@@ -18,6 +18,7 @@ import { Roads } from 'src/entities/roads.entity';
 import { Users } from 'src/entities/users.entity';
 import { User } from 'src/util/decorators/user.decorator';
 import { CommonResponse } from 'src/util/interceptors/common.response.interceptor';
+import { CreateRoadImageResponseDTO } from './dto/create-road-image.response.dto';
 
 import { CreateRoadRequestDTO } from './dto/create-road.request.dto';
 import { CreateRoadResponseDTO } from './dto/create-road.response.dto';
@@ -34,21 +35,39 @@ import { MulterFile } from './types/file';
 export class RoadsController {
   constructor(private readonly roadsService: RoadsService) {}
 
-  @Post('')
+  @Post('upload')
   @UseInterceptors(FilesInterceptor('files'))
   @UseGuards(JwtAuthGuard)
-  async createRoad(
+  async uploadRoadImages(
     @User() user: Users,
-    @Body(new CategoryValidationPipe(), new PlaceValidationPipe())
-    createRoadRequestDto: CreateRoadRequestDTO,
     @UploadedFiles() createImages: Array<MulterFile> | null,
-  ): Promise<CommonResponse<CreateRoadResponseDTO>> {
-    // 추가할 이미지를 업로드하여 주소를 저장합니다.
+  ): Promise<CommonResponse<CreateRoadImageResponseDTO>> {
     const imageLocations: string[] | null =
       createImages?.map((file: MulterFile) => {
         return `https://${STORAGE_DOMAIN}/${file.key}`;
       }) ?? null;
 
+    const createRoadImages = await this.roadsService.createRoadImages(
+      imageLocations,
+    );
+
+    const createRoadImageResponseDTO =
+      CreateRoadImageResponseDTO.fromRoadImagesArray(createRoadImages);
+
+    return {
+      resCode: 'SUCCESS_CREATE_ROAD_IMAGES',
+      message: '성공적으로 길 이미지를 업로드했습니다.',
+      data: createRoadImageResponseDTO,
+    };
+  }
+
+  @Post('')
+  @UseGuards(JwtAuthGuard)
+  async createRoad(
+    @User() user: Users,
+    @Body(new CategoryValidationPipe(), new PlaceValidationPipe())
+    createRoadRequestDto: CreateRoadRequestDTO,
+  ): Promise<CommonResponse<CreateRoadResponseDTO>> {
     // 해시태그를 정규식으로 공백 없는 문자열 부분만 필터링합니다.
     const filteredHashtags: string[] | null =
       createRoadRequestDto.hashtags?.map((hashtag) =>
@@ -65,7 +84,7 @@ export class RoadsController {
       {
         routes: createRoadRequestDto.routes,
         spots: createRoadRequestDto.spots,
-        images: imageLocations,
+        images: createRoadRequestDto.images,
         hashtags: filteredHashtags,
       },
     );
@@ -78,20 +97,12 @@ export class RoadsController {
   }
 
   @Put(':id')
-  @UseInterceptors(FilesInterceptor('files'))
   @UseGuards(JwtAuthGuard)
   async updateRoad(
     @User() user: Users,
     @Param('id') roadId: string,
     @Body() updateRoadRequestDto: UpdateRoadRequestDTO,
-    @UploadedFiles() createImages: Array<MulterFile> | null,
   ): Promise<CommonResponse<CreateRoadResponseDTO>> {
-    // 추가할 이미지를 업로드하여 주소를 저장합니다.
-    const imageLocations: string[] | null =
-      createImages?.map((file: MulterFile) => {
-        return `https://${STORAGE_DOMAIN}/${file.key}`;
-      }) ?? null;
-
     // 해시태그를 정규식으로 공백 없는 문자열 부분만 필터링합니다.
     const filteredHashtags: string[] | null =
       updateRoadRequestDto.hashtags?.map((hashtag) =>
@@ -109,8 +120,7 @@ export class RoadsController {
       {
         routes: updateRoadRequestDto.routes,
         spots: updateRoadRequestDto.spots,
-        images: imageLocations,
-        deletedImages: updateRoadRequestDto.deletedImageUrls,
+        images: updateRoadRequestDto.images,
         hashtags: filteredHashtags,
       },
     );

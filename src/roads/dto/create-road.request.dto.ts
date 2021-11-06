@@ -49,4 +49,9 @@ export class CreateRoadRequestDTO {
   @IsOptional()
   @IsString({ each: true })
   hashtags: string[] | null;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString({ each: true })
+  images: string[] | null;
 }
