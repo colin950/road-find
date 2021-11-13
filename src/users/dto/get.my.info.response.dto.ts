@@ -3,6 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { Categories } from 'src/entities/categories.entity';
 import { Places } from 'src/entities/places.entity';
 import { Users } from 'src/entities/users.entity';
+import { GetPlacesResponseDTO } from 'src/places/dto/get.places.response.dto';
 
 export class GetMyInfoResponseDto {
   @ApiProperty()
@@ -18,7 +19,7 @@ export class GetMyInfoResponseDto {
   profileImageUrl: string | null;
 
   @ApiProperty()
-  places: Places | null;
+  places: GetPlacesResponseDTO | null;
 
   @ApiProperty()
   favoriteCategories: Categories[];
@@ -29,7 +30,9 @@ export class GetMyInfoResponseDto {
     dto.email = user.email;
     dto.nickname = user.nickname;
     dto.profileImageUrl = user.profileImageUrl ?? null;
-    dto.places = user.places;
+    dto.places = user.places
+      ? GetPlacesResponseDTO.fromPlace(user.places)
+      : null;
     dto.favoriteCategories = user.favorite_categories;
     return dto;
   }
