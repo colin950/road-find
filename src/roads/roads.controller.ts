@@ -138,15 +138,11 @@ export class RoadsController {
     @User() user: Users,
     @Param('id') roadId: string,
   ): Promise<CommonResponse<boolean>> {
-    const isRemoved: boolean = await this.roadsService.deleteRoad(
-      user,
-      Number(roadId),
-    );
+    await this.roadsService.deleteRoad(user, Number(roadId));
 
     return {
       resCode: 'SUCCESS_DELETE_ROAD',
       message: '성공적으로 길을 삭제했습니다.',
-      data: isRemoved,
     };
   }
 

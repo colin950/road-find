@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Users } from '../entities/users.entity';
 import { isHashValid } from '../util/cipher';
@@ -24,7 +18,7 @@ export class AuthService {
           resCode: 'NOT_FOUND_EMAIL',
           message: ErrorCode.NOT_FOUND_EMAIL,
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -36,7 +30,7 @@ export class AuthService {
           resCode: 'INVALID_PASSWORD',
           message: ErrorCode.INVALID_PASSWORD,
         },
-        400,
+        HttpStatus.OK,
       );
 
     if (user && isPasswordValid) {

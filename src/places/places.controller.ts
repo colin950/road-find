@@ -28,15 +28,15 @@ export class PlacesController {
       );
     }
 
-    const getPlacesReponseDTO: GetPlacesResponseDTO[] | undefined =
+    const getPlacesReponseDTO: GetPlacesResponseDTO[] =
       getPlaces?.map((place) => {
         return GetPlacesResponseDTO.fromPlace(place);
-      });
+      }) ?? [];
 
     return {
       resCode: 'SUCCESS_GET_PLACES',
       message: '성공적으로 주소 정보를 조회했습니다.',
-      data: getPlacesReponseDTO || null,
+      data: getPlacesReponseDTO,
     };
   }
 }

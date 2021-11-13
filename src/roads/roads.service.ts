@@ -116,7 +116,7 @@ export class RoadsService {
           resCode: 'NOT_FOUND_ROAD',
           message: '해당하는 길이 존재하지 않습니다!',
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -127,7 +127,7 @@ export class RoadsService {
           resCode: 'NOT_AUTHORIZED_EDIT',
           message: '수정 권한이 없습니다!',
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -153,7 +153,7 @@ export class RoadsService {
             resCode: 'NOT_FOUND_PLACE',
             message: '요청으로 들어온 주소 정보가 없습니다.',
           },
-          400,
+          HttpStatus.OK,
         );
       }
 
@@ -165,7 +165,13 @@ export class RoadsService {
       const category = await Categories.findOne(categoryId);
 
       if (!category) {
-        throw new Error();
+        throw new HttpException(
+          {
+            resCode: 'NOT_FOUND_CATEGORY',
+            message: '카테고리를 조회할 수 없습니다!',
+          },
+          HttpStatus.OK,
+        );
       }
 
       updateRoad.category = category;
@@ -259,7 +265,7 @@ export class RoadsService {
           resCode: 'NOT_FOUND_ROAD',
           message: '해당하는 길이 존재하지 않습니다!',
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -270,7 +276,7 @@ export class RoadsService {
           resCode: 'NOT_AUTHORIZED_EDIT',
           message: '수정 권한이 없습니다!',
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -287,7 +293,7 @@ export class RoadsService {
           resCode: 'NOT_FOUND_ROAD',
           message: '해당하는 길이 존재하지 않습니다!',
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.OK,
       );
     }
 

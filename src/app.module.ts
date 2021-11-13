@@ -10,6 +10,7 @@ import { AwsService } from './aws/aws.service';
 import { AwsModule } from './aws/aws.module';
 import { RoadsModule } from './roads/roads.module';
 import { PlacesModule } from './places/places.module';
+import { CategoriesModule } from './categories/categories.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -41,6 +42,7 @@ import configuration from './config/configuration';
     AwsModule,
     RoadsModule,
     PlacesModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService, AwsService],

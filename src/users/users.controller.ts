@@ -47,7 +47,6 @@ export class UsersController {
     return {
       resCode: 'SUCCESS_SIGN_UP',
       message: '회원가입에 성공하였습니다.',
-      data: true,
     };
   }
 
@@ -62,7 +61,6 @@ export class UsersController {
     return {
       resCode: 'SUCCESS_SEND_MAIL_SIGN_UP_TOKEN',
       message: '회원가입 인증 토큰을 전송하였습니다.',
-      data: true,
     };
   }
 
@@ -70,7 +68,7 @@ export class UsersController {
   async verificationToken(
     @Body() verificationTokenRequestDTO: VerificationTokenRequestDto,
   ): Promise<CommonResponse<boolean>> {
-    const isVerified: boolean = await this.usersService.verificationMailToken(
+    await this.usersService.verificationMailToken(
       verificationTokenRequestDTO.email,
       verificationTokenRequestDTO.token,
       verificationTokenRequestDTO.tokenType,
@@ -79,7 +77,6 @@ export class UsersController {
     return {
       resCode: 'SUCCESS_VERIFYING',
       message: '토큰 인증에 성공하였습니다.',
-      data: isVerified,
     };
   }
 
@@ -87,14 +84,11 @@ export class UsersController {
   async requestResetPassword(
     @Body() { email }: RequestResetPasswordRequestDto,
   ): Promise<CommonResponse<boolean>> {
-    const isRequested: boolean = await this.usersService.requestResetPassword(
-      email,
-    );
+    await this.usersService.requestResetPassword(email);
 
     return {
       resCode: 'SUCCESS_REQUEST_RESET_PASSWORD',
       message: '비밀번호 토큰 전송에 성공하였습니다.',
-      data: isRequested,
     };
   }
 
@@ -102,15 +96,11 @@ export class UsersController {
   async resetPassword(
     @Body() { email, password }: ResetPasswordRequestDto,
   ): Promise<CommonResponse<boolean>> {
-    const isReset: boolean = await this.usersService.resetPassword(
-      email,
-      password,
-    );
+    await this.usersService.resetPassword(email, password);
 
     return {
       resCode: 'SUCCESS_RESET_PASSWORD',
       message: '비밀번호 초기화에 성공하였습니다.',
-      data: isReset,
     };
   }
 }

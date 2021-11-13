@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 export interface CommonResponse<T> {
   resCode: string;
   message: string;
-  data: T;
+  data?: T;
 }
 
 @Injectable()

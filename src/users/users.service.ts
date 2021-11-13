@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Users } from '../entities/users.entity';
 import { hashPassword } from '../util/cipher';
 import { randomInt } from 'crypto';
@@ -6,9 +6,9 @@ import { ErrorCode } from '../util/interceptors/http-exception.filter';
 import * as nodemailer from 'nodemailer';
 import { MailForm } from './users.type';
 import { ConfigService } from '@nestjs/config';
-import { MailTokens, MailTokenType } from 'src/entities/mail.tokens.entity';
 import { Equal } from 'typeorm';
 import { Places } from 'src/entities/places.entity';
+import { MailTokens, MailTokenType } from 'src/entities/mail.tokens.entity';
 
 @Injectable()
 export class UsersService {
@@ -48,7 +48,7 @@ export class UsersService {
           resCode: 'ALREADY_EXIST_EMAIL',
           message: ErrorCode.ALREADY_EXIST_EMAIL,
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -60,10 +60,10 @@ export class UsersService {
     if (user) {
       throw new HttpException(
         {
-          resCode: 'NOT_FOUND_NICKNAME',
+          resCode: 'ALREADY_EXIST_NICKNAME',
           message: ErrorCode.ALREADY_EXIST_NICKNAME,
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -77,7 +77,7 @@ export class UsersService {
           resCode: 'NOT_FOUND_PLACE',
           message: ErrorCode.NOT_FOUND_PLACE,
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -117,7 +117,7 @@ export class UsersService {
           resCode: 'SEND_MAIL_ERROR',
           message: '메일 보내기에 실패하였습니다.',
         },
-        400,
+        HttpStatus.OK,
       );
     }
   }
@@ -144,7 +144,7 @@ export class UsersService {
           resCode: 'NOT_FOUND_TOKEN',
           message: ErrorCode.NOT_FOUND_TOKEN,
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -160,7 +160,7 @@ export class UsersService {
           resCode: 'ALREADY_VERIFIED_TOKEN',
           message: '이미 토큰 인증을 성공했습니다.',
         },
-        400,
+        HttpStatus.OK,
       );
     }
 
@@ -202,7 +202,7 @@ export class UsersService {
           resCode: 'NOT_FOUND_EMAIL',
           message: ErrorCode.NOT_FOUND_EMAIL,
         },
-        400,
+        HttpStatus.OK,
       );
     }
 

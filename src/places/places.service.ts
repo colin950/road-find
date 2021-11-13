@@ -60,8 +60,8 @@ export class PlacesService {
 
     // SQL point (경도, 위도)
     const getPlaces = await entityManager.query(
-      `SELECT * FROM places ORDER BY coords <-> point '(${position[1]}, ${
-        position[0]
+      `SELECT * FROM places ORDER BY coords <-> point '(${position[0]}, ${
+        position[1]
       })' LIMIT ${pageOptions?.take ?? 10} OFFSET ${pageOptions?.skip ?? 0};`,
     );
 

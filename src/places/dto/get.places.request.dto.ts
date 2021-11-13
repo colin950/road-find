@@ -21,6 +21,5 @@ export class GetPlacesRequestDTO {
   pageSize?: number = 10;
 
   @ApiProperty()
-  @IsNotEmpty()
   position?: Position;
 }
