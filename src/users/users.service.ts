@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { Equal } from 'typeorm';
 import { Places } from 'src/entities/places.entity';
 import { MailTokens, MailTokenType } from 'src/entities/mail.tokens.entity';
+import { Categories } from 'src/entities/categories.entity';
 
 @Injectable()
 export class UsersService {
@@ -238,5 +239,29 @@ export class UsersService {
     mailToken.token = randomToken;
     mailToken.tokenType = tokenType;
     await mailToken.save();
+  }
+
+  async getUserInfo(id: number) {
+    const user = await Users.findOne(id, {
+      relations: ['places', 'favorite_categories'],
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          resCode: 'NOT_FOUND_USER',
+          message: ErrorCode.NOT_FOUND_USER,
+        },
+        HttpStatus.OK,
+      );
+    }
+
+    return {
+      email: user.email,
+      nickname: user.nickname,
+      profileImageUrl: user.profileImageUrl,
+      places: user.places,
+      favoriteCategories: user.favorite_categories,
+    };
   }
 }
