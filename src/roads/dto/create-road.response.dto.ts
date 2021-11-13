@@ -77,7 +77,7 @@ export class CreateRoadResponseDTO {
       road.spots?.map((spot) => {
         return {
           title: spot.title,
-          content: spot.title,
+          content: spot.content,
           point: (spot.point as Point).coordinates,
         } as Spot;
       }) ?? null;
