@@ -9,6 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import { Equal } from 'typeorm';
 import { Places } from 'src/entities/places.entity';
 import { MailTokens, MailTokenType } from 'src/entities/mail.tokens.entity';
+import { Categories } from 'src/entities/categories.entity';
+import { GetMyInfoResponseDto } from './dto/get.my.info.response.dto';
 
 @Injectable()
 export class UsersService {
@@ -238,5 +240,29 @@ export class UsersService {
     mailToken.token = randomToken;
     mailToken.tokenType = tokenType;
     await mailToken.save();
+  }
+
+  async getUserInfo(id: number) {
+    const user = await Users.findOne(id, {
+      relations: ['places', 'favorite_categories'],
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          resCode: 'NOT_FOUND_USER',
+          message: ErrorCode.NOT_FOUND_USER,
+        },
+        HttpStatus.OK,
+      );
+    }
+
+    return GetMyInfoResponseDto.fromUser(user);
+  }
+
+  async updateCategory(user: Users, keys: string[]) {
+    const categories = await Categories.findByKeys(keys);
+    user.favorite_categories = categories;
+    await Users.save(user);
   }
 }

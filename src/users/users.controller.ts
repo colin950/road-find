@@ -1,6 +1,7 @@
-import { Controller, Post, Body, UseGuards, Put } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Put, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LocalAuthGuard } from '../auth/local-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateUsersDTO } from './dto/create.users.dto';
 import { AuthService } from '../auth/auth.service';
 import { VerificationTokenRequestDto } from './dto/verification.token.request.dto';
@@ -11,6 +12,8 @@ import { AuthUser } from 'src/auth/auth.types';
 import { CommonResponse } from 'src/util/interceptors/common.response.interceptor';
 import { AccessTokenDTO } from 'src/auth/dto/access.token.dto';
 import { SendMailSignUpTokenRequestDTO } from './dto/send-mail-signup-token.request.dto';
+import { Users } from 'src/entities/users.entity';
+import { UpdateFavoriteCategoryDto as UpdateCategoryDto } from './dto/update.category';
 
 @Controller('users')
 export class UsersController {
@@ -101,6 +104,31 @@ export class UsersController {
     return {
       resCode: 'SUCCESS_RESET_PASSWORD',
       message: '비밀번호 초기화에 성공하였습니다.',
+    };
+  }
+
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  async getMyInfo(@User() user: Users) {
+    const userInfo = await this.usersService.getUserInfo(user.id);
+    return {
+      resCode: 'SUCCESS_GET_MY_INFO',
+      message: '성공적으로 내 정보를 조회했습니다.',
+      data: userInfo,
+    };
+  }
+
+  @Put('category')
+  @UseGuards(JwtAuthGuard)
+  async updateCategory(
+    @User() user: Users,
+    @Body() { categories }: UpdateCategoryDto,
+  ) {
+    await this.usersService.updateCategory(user, categories);
+
+    return {
+      resCode: 'SUCCESS_UPDATE_CATEGORY',
+      message: '성공적으로 선호 카테고리를 변경했습니다.',
     };
   }
 }
