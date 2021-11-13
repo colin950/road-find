@@ -6,7 +6,8 @@ import { Position } from 'geojson';
 export class GetPlacesRequestDTO {
   @ApiProperty()
   @IsString()
-  keyword: string;
+  @IsOptional()
+  keyword?: string;
 
   @ApiProperty()
   @IsNumber()
@@ -21,5 +22,13 @@ export class GetPlacesRequestDTO {
   pageSize?: number = 10;
 
   @ApiProperty()
-  position?: Position;
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  position_x?: number;
+
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  position_y?: number;
 }

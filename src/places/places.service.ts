@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Position } from 'geojson';
+import { Point, Position } from 'geojson';
 import { Places } from 'src/entities/places.entity';
 import { getManager, Like } from 'typeorm';
 
@@ -9,7 +9,6 @@ export class PlacesService {
     name: string,
     page?: number,
     pageSize?: number,
-    position?: Position,
   ): Promise<Places[]> {
     if (name.trim() === '') {
       return [];
@@ -23,10 +22,6 @@ export class PlacesService {
 
     if (page && pageSize) {
       pageOptions['skip'] = (page - 1) * pageSize;
-    }
-
-    if (position) {
-      return this.getNearestPlacesByPosition(position, pageOptions);
     }
 
     return this.getPlacesByName(name, pageOptions);
@@ -49,25 +44,49 @@ export class PlacesService {
     return getPlacesByName;
   }
 
-  private async getNearestPlacesByPosition(
+  async getNearestPlacesByPosition(
     position: Position,
-    pageOptions: {
-      take?: number;
-      skip?: number;
-    },
+    page?: number,
+    pageSize?: number,
   ): Promise<Places[]> {
+    const pageOptions = {
+      take: 10,
+      skip: 0,
+    };
+
+    if (pageSize) {
+      pageOptions['take'] = pageSize;
+    }
+
+    if (page && pageSize) {
+      pageOptions['skip'] = (page - 1) * pageSize;
+    }
+
     const entityManager = getManager();
 
     // SQL point (경도, 위도)
-    const getPlaces = await entityManager.query(
-      `SELECT * FROM places ORDER BY coords <-> point '(${position[0]}, ${
-        position[1]
-      })' LIMIT ${pageOptions?.take ?? 10} OFFSET ${pageOptions?.skip ?? 0};`,
+    const getPlaces: any[] = await entityManager.query(
+      `SELECT *, ST_X(coords::geometry), ST_Y(coords::geometry) FROM road.places ORDER BY coords <-> 'POINT (${position[0]} ${position[1]})' LIMIT ${pageOptions.take} OFFSET ${pageOptions.skip};`,
     );
 
-    console.log(getPlaces);
+    const mappedPlaces = getPlaces.map((place) => {
+      place.fullAddress = place.full_address;
+      delete place['full_address'];
 
-    return [];
+      place.coords = {
+        type: 'Point',
+        coordinates: [place.st_x, place.st_y],
+      } as Point;
+
+      delete place['st_x'];
+      delete place['st_y'];
+
+      return place;
+    });
+
+    console.log(mappedPlaces[0]);
+
+    return mappedPlaces;
   }
 
   async findPlacesByFullAddress(
