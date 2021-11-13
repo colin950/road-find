@@ -1,11 +1,12 @@
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Users, UserStatus } from '../entities/users.entity';
+import { Users } from '../entities/users.entity';
 import { isHashValid } from '../util/cipher';
 import { ErrorCode } from '../util/interceptors/http-exception.filter';
 import { AuthUser, JwtPayload } from './auth.types';
@@ -17,15 +18,26 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<AuthUser | null> {
     const user = await Users.findByEmail(email);
-    if (!user) throw new NotFoundException(ErrorCode.NOT_FOUND_EMAIL);
-
-    if (user.status === UserStatus.UNCONFIRMED)
-      throw new UnauthorizedException(ErrorCode.INVALID_USER_STATUS);
+    if (!user) {
+      throw new HttpException(
+        {
+          resCode: 'NOT_FOUND_EMAIL',
+          message: ErrorCode.NOT_FOUND_EMAIL,
+        },
+        400,
+      );
+    }
 
     const isPasswordValid = await isHashValid(pass, user.password);
 
     if (!isPasswordValid)
-      throw new BadRequestException(ErrorCode.INVALID_PASSWORD);
+      throw new HttpException(
+        {
+          resCode: 'INVALID_PASSWORD',
+          message: ErrorCode.INVALID_PASSWORD,
+        },
+        400,
+      );
 
     if (user && isPasswordValid) {
       const { password, ...result } = user;

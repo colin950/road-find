@@ -19,4 +19,8 @@ export class CreateUsersDTO {
   @IsOptional()
   @IsString()
   nickname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  placeCode: string;
 }

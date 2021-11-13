@@ -17,7 +17,6 @@ import { MulterModule } from '@nestjs/platform-express';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
-import { diskStorage } from 'multer';
 
 @Module({
   imports: [

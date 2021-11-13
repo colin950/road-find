@@ -17,6 +17,7 @@ export class PlacesController {
       getPlacesRequestDTO.keyword,
       getPlacesRequestDTO.page,
       getPlacesRequestDTO.pageSize,
+      getPlacesRequestDTO.position,
     );
 
     if (getPlaces.length === 0) {

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Position } from 'geojson';
 
 export class GetPlacesRequestDTO {
   @ApiProperty()
@@ -18,4 +19,8 @@ export class GetPlacesRequestDTO {
   @IsOptional()
   @Type(() => Number)
   pageSize?: number = 10;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  position?: Position;
 }

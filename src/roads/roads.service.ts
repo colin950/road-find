@@ -111,12 +111,24 @@ export class RoadsService {
     const updateRoad = await Roads.findOne(roadId);
 
     if (!updateRoad) {
-      throw new Error('해당하는 길이 존재하지 않습니다!');
+      throw new HttpException(
+        {
+          resCode: 'NOT_FOUND_ROAD',
+          message: '해당하는 길이 존재하지 않습니다!',
+        },
+        400,
+      );
     }
 
     // 수정 권한을 확인합니다.
     if (updateRoad.user.id !== user.id) {
-      throw new Error('수정 권한이 없습니다!');
+      throw new HttpException(
+        {
+          resCode: 'NOT_AUTHORIZED_EDIT',
+          message: '수정 권한이 없습니다!',
+        },
+        400,
+      );
     }
 
     if (title) {
@@ -136,7 +148,13 @@ export class RoadsService {
       const place = await Places.findOne(placeCode);
 
       if (!place) {
-        throw new Error();
+        throw new HttpException(
+          {
+            resCode: 'NOT_FOUND_PLACE',
+            message: '요청으로 들어온 주소 정보가 없습니다.',
+          },
+          400,
+        );
       }
 
       updateRoad.place = place;
@@ -236,12 +254,24 @@ export class RoadsService {
     const updateRoad: Roads | undefined = await Roads.findOne(roadId);
 
     if (!updateRoad) {
-      throw new Error('해당하는 길이 존재하지 않습니다!');
+      throw new HttpException(
+        {
+          resCode: 'NOT_FOUND_ROAD',
+          message: '해당하는 길이 존재하지 않습니다!',
+        },
+        400,
+      );
     }
 
     // 수정 권한을 확인합니다.
     if (updateRoad.user.id !== user.id) {
-      throw new Error('수정 권한이 없습니다!');
+      throw new HttpException(
+        {
+          resCode: 'NOT_AUTHORIZED_EDIT',
+          message: '수정 권한이 없습니다!',
+        },
+        400,
+      );
     }
 
     await updateRoad.softRemove();

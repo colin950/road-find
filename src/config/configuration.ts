@@ -19,6 +19,7 @@ export default () => ({
     bucket: get('BUCKET') ?? '',
   },
   gmail: {
+    email: get('GMAIL_EMAIL') ?? '',
     clientId: get('GMAIL_CLIENT_ID') ?? '',
     clientSecret: get('GMAIL_CLIENT_SECRET') ?? '',
     accessToken: get('GMAIL_ACCESS_TOKEN') ?? '',

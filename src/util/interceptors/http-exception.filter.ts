@@ -4,7 +4,7 @@ import {
   ArgumentsHost,
   HttpException,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 export enum ErrorCode {
   NOT_FOUND_EMAIL = 'not_found_email',
@@ -16,6 +16,8 @@ export enum ErrorCode {
   INTERNAL_SERVER_ERROR = 'internal_server_error',
   SEND_MAIL_ERROR = 'send_mail_error',
   NOT_FOUND_USER = 'not_found_user',
+  NOT_FOUND_PLACE = 'not_found_place',
+  ALREADY_EXIST_NICKNAME = 'already_exist_nickname',
 }
 
 @Catch(HttpException)

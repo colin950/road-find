@@ -1,25 +1,22 @@
-import { bool } from 'aws-sdk/clients/signer';
 import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Categories } from './categories.entity';
 import { CreatedUpdatedTime } from './common/created.updated.time.entity';
+import { Places } from './places.entity';
 import { Roads } from './roads.entity';
 
 export enum SnsType {
   EMAIL,
   APPLE,
-}
-
-export enum UserStatus {
-  UNCONFIRMED,
-  REGISTERED,
 }
 
 @Entity()
@@ -48,26 +45,17 @@ export class Users extends CreatedUpdatedTime {
   @Column({ nullable: true })
   token?: string;
 
-  @Column({
-    type: 'smallint',
-    default: UserStatus.UNCONFIRMED,
-  })
-  status!: UserStatus;
-
   @Column({ type: 'timestamptz', nullable: true })
   confirmedAt?: Date;
 
   @Column({ type: 'timestamptz', nullable: true })
   signOutAt?: Date;
 
-  @Column({ type: 'bool', default: false })
-  isSignOut?: bool;
+  @Column({ type: 'boolean', default: false })
+  isSignOut?: boolean;
 
   @Column({ nullable: true })
   profileImageUrl?: string;
-
-  @Column({ nullable: true })
-  resetPasswordToken: string;
 
   // == Relations ==
   @OneToMany(() => Roads, (road) => road.user, {
@@ -87,6 +75,10 @@ export class Users extends CreatedUpdatedTime {
   @JoinTable({ name: 'boomarks' })
   bookmarks: Roads[];
 
+  @OneToOne(() => Places, { cascade: true, nullable: true })
+  @JoinColumn()
+  places: Places | null;
+
   static async createUser(user: any) {
     return await this.createQueryBuilder()
       .insert()
@@ -96,38 +88,15 @@ export class Users extends CreatedUpdatedTime {
   }
 
   static async findByEmail(email: string) {
-    return await this.findOne({ email: email });
+    return await this.findOne({ email });
+  }
+
+  static async findByNickname(nickname: string) {
+    return await this.findOne({ nickname });
   }
 
   static async findByToken(token: string) {
     return await this.findOne({ token: token });
-  }
-
-  static async findByResetPasswordToken(token: string) {
-    return await this.findOne({ resetPasswordToken: token });
-  }
-
-  static async findByTokenAndUpdateRegistered(token: string) {
-    return await this.createQueryBuilder()
-      .update(Users)
-      .set({
-        token: '',
-        confirmedAt: new Date(),
-        status: UserStatus.REGISTERED,
-      })
-      .where({ token: token })
-      .execute();
-  }
-
-  static async findByEmailAndUpdateResetPasswordToken(
-    email: string,
-    token: string,
-  ) {
-    return await this.createQueryBuilder()
-      .update(Users)
-      .set({ resetPasswordToken: token })
-      .where({ email: email })
-      .execute();
   }
 
   static async findByEmailAndUpdatePassword(email: string, password: any) {

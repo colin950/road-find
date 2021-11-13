@@ -10,6 +10,7 @@ import { User } from 'src/util/decorators/user.decorator';
 import { AuthUser } from 'src/auth/auth.types';
 import { CommonResponse } from 'src/util/interceptors/common.response.interceptor';
 import { AccessTokenDTO } from 'src/auth/dto/access.token.dto';
+import { SendMailSignUpTokenRequestDTO } from './dto/send-mail-signup-token.request.dto';
 
 @Controller('users')
 export class UsersController {
@@ -17,19 +18,6 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
   ) {}
-
-  @Post('/create')
-  async create(
-    @Body() { email, password, nickname }: CreateUsersDTO,
-  ): Promise<CommonResponse<boolean>> {
-    await this.usersService.create(email, password, nickname);
-
-    return {
-      resCode: 'SUCCESS_SIGN_UP',
-      message: '회원가입에 성공하였습니다.',
-      data: true,
-    };
-  }
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')
@@ -45,13 +33,47 @@ export class UsersController {
     };
   }
 
+  @Post('/create')
+  async create(
+    @Body() createUserDTO: CreateUsersDTO,
+  ): Promise<CommonResponse<boolean>> {
+    await this.usersService.create(
+      createUserDTO.email,
+      createUserDTO.password,
+      createUserDTO.nickname,
+      createUserDTO.placeCode,
+    );
+
+    return {
+      resCode: 'SUCCESS_SIGN_UP',
+      message: '회원가입에 성공하였습니다.',
+      data: true,
+    };
+  }
+
+  @Post('/token/signup')
+  async sendMailSignUpToken(
+    @Body() sendMailSignUpTokenRequestDTO: SendMailSignUpTokenRequestDTO,
+  ): Promise<CommonResponse<boolean>> {
+    await this.usersService.requestSignUpToken(
+      sendMailSignUpTokenRequestDTO.email,
+    );
+
+    return {
+      resCode: 'SUCCESS_SEND_MAIL_SIGN_UP_TOKEN',
+      message: '회원가입 인증 토큰을 전송하였습니다.',
+      data: true,
+    };
+  }
+
   @Post('/verification/token')
   async verificationToken(
-    @Body() { token, tokenType }: VerificationTokenRequestDto,
+    @Body() verificationTokenRequestDTO: VerificationTokenRequestDto,
   ): Promise<CommonResponse<boolean>> {
-    const isVerified: boolean = await this.usersService.verificationToken(
-      token,
-      tokenType,
+    const isVerified: boolean = await this.usersService.verificationMailToken(
+      verificationTokenRequestDTO.email,
+      verificationTokenRequestDTO.token,
+      verificationTokenRequestDTO.tokenType,
     );
 
     return {
@@ -84,6 +106,7 @@ export class UsersController {
       email,
       password,
     );
+
     return {
       resCode: 'SUCCESS_RESET_PASSWORD',
       message: '비밀번호 초기화에 성공하였습니다.',
