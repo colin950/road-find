@@ -10,6 +10,7 @@ import { Equal } from 'typeorm';
 import { Places } from 'src/entities/places.entity';
 import { MailTokens, MailTokenType } from 'src/entities/mail.tokens.entity';
 import { Categories } from 'src/entities/categories.entity';
+import { GetMyInfoResponseDto } from './dto/get.my.info.response.dto';
 
 @Injectable()
 export class UsersService {
@@ -256,13 +257,7 @@ export class UsersService {
       );
     }
 
-    return {
-      email: user.email,
-      nickname: user.nickname,
-      profileImageUrl: user.profileImageUrl,
-      places: user.places,
-      favoriteCategories: user.favorite_categories,
-    };
+    return GetMyInfoResponseDto.fromUser(user);
   }
 
   async updateCategory(user: Users, keys: string[]) {
