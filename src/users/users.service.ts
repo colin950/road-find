@@ -264,4 +264,10 @@ export class UsersService {
       favoriteCategories: user.favorite_categories,
     };
   }
+
+  async updateCategory(user: Users, keys: string[]) {
+    const categories = await Categories.findByKeys(keys);
+    user.favorite_categories = categories;
+    await Users.save(user);
+  }
 }

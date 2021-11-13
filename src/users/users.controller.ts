@@ -13,6 +13,7 @@ import { CommonResponse } from 'src/util/interceptors/common.response.intercepto
 import { AccessTokenDTO } from 'src/auth/dto/access.token.dto';
 import { SendMailSignUpTokenRequestDTO } from './dto/send-mail-signup-token.request.dto';
 import { Users } from 'src/entities/users.entity';
+import { UpdateFavoriteCategoryDto as UpdateCategoryDto } from './dto/update.category';
 
 @Controller('users')
 export class UsersController {
@@ -114,6 +115,20 @@ export class UsersController {
       resCode: 'SUCCESS_GET_MY_INFO',
       message: '성공적으로 내 정보를 조회했습니다.',
       data: userInfo,
+    };
+  }
+
+  @Put('category')
+  @UseGuards(JwtAuthGuard)
+  async updateCategory(
+    @User() user: Users,
+    @Body() { categories }: UpdateCategoryDto,
+  ) {
+    await this.usersService.updateCategory(user, categories);
+
+    return {
+      resCode: 'SUCCESS_UPDATE_CATEGORY',
+      message: '성공적으로 선호 카테고리를 변경했습니다.',
     };
   }
 }

@@ -23,4 +23,10 @@ export class Categories extends CreatedUpdatedTime {
   // == Relations ==````
   @OneToMany(() => Roads, (road) => road.category)
   roads?: Roads;
+
+  static async findByKeys(keys: string[]) {
+    return this.createQueryBuilder()
+      .where('key IN (:...keys)', { keys: keys })
+      .getMany();
+  }
 }
