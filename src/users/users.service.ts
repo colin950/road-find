@@ -86,7 +86,7 @@ export class UsersService {
     return true;
   }
 
-  private async sendMail(mailForm: MailForm) {
+  private async sendMail(mailForm: MailForm): Promise<void> {
     const fromEmail = this.configService.get('gmail.email');
 
     try {
@@ -191,7 +191,7 @@ export class UsersService {
       subject: '[나들길] 회원가입 메일 인증',
       text: `아래의 코드를 입력해 인증을 완료해 주세요. ${randomFiveLengthToken}`,
     };
-    await this.sendMail(mailForm);
+    this.sendMail(mailForm);
 
     return true;
   }
@@ -220,7 +220,7 @@ export class UsersService {
       subject: '[나들길] 비밀번호 갱신 메일 인증',
       text: `아래의 코드를 입력해 인증을 완료해 주세요. ${randomFiveLengthToken}`,
     };
-    await this.sendMail(mailForm);
+    this.sendMail(mailForm);
 
     return true;
   }
