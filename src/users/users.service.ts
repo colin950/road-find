@@ -6,7 +6,7 @@ import { ErrorCode } from '../util/interceptors/http-exception.filter';
 import * as nodemailer from 'nodemailer';
 import { MailForm } from './users.type';
 import { ConfigService } from '@nestjs/config';
-import { Equal, getManager, In } from 'typeorm';
+import { Equal, In } from 'typeorm';
 import { Places } from 'src/entities/places.entity';
 import { MailTokens, MailTokenType } from 'src/entities/mail.tokens.entity';
 import { Categories } from 'src/entities/categories.entity';

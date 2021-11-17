@@ -26,7 +26,7 @@ export class Users extends CreatedUpdatedTime {
   id!: number;
 
   @Column()
-  @Index({ unique: true })
+  @Index()
   email!: string;
 
   @Column({ select: false })
