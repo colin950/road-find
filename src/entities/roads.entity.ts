@@ -20,6 +20,7 @@ import { RoadAnalytics } from './road.analytics.entity';
 import { RoadImages } from './road.images.entity';
 import { RoadSpots } from './road.spots.entity';
 import { Users } from './users.entity';
+import {Bookmarks} from './bookmarks.entity'
 
 @Entity()
 export class Roads extends CreatedUpdatedTime {
@@ -88,4 +89,10 @@ export class Roads extends CreatedUpdatedTime {
     cascade: true,
   })
   images: RoadImages[] | null;
+
+  @OneToMany(() => Bookmarks, (bookmark) => bookmark.road,{
+    eager: true,
+    cascade: true,
+  })
+  bookmarks: Bookmarks[] | null;
 }

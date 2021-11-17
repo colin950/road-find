@@ -14,6 +14,7 @@ import { Categories } from './categories.entity';
 import { CreatedUpdatedTime } from './common/created.updated.time.entity';
 import { Places } from './places.entity';
 import { Roads } from './roads.entity';
+import {Bookmarks} from './bookmarks.entity'
 
 export enum SnsType {
   EMAIL,
@@ -75,12 +76,6 @@ export class Users extends CreatedUpdatedTime {
     eager: true,
   })
   places: Places | null;
-
-  @ManyToMany(() => Roads, {
-    cascade: true,
-  })
-  @JoinTable({ name: 'boomarks' })
-  bookmarks: Promise<Roads[]>;
 
   static async createUser(user: any) {
     return await this.createQueryBuilder()

@@ -30,10 +30,64 @@ import { CategoryValidationPipe } from './pipe/category.validaiton.pipe';
 import { PlaceValidationPipe } from './pipe/place.validaiton.pipe';
 import { RoadsService } from './roads.service';
 import { MulterFile } from './types/file';
+import {PagingDTO} from './dto/paging.dto'
 
 @Controller('roads')
 export class RoadsController {
   constructor(private readonly roadsService: RoadsService) {}
+
+  @Get('my')
+  @UseGuards(JwtAuthGuard)
+  async getMyRoad(
+    @User() user: Users,
+    @Query() pagingDTO: PagingDTO
+  ) {
+    const getRoadsOrNull = await this.roadsService.getMyRoad(
+      user,
+      pagingDTO.page,
+      pagingDTO.pageSize
+    )
+
+    return {
+      resCode: 'SUCCESS_UPDATE_BOOKMARK',
+      message: '성공적으로 나의길 목록을 조회했습니다.',
+      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull),
+    }
+  }
+
+  @Put('bookmark/:id')
+  @UseGuards(JwtAuthGuard)
+  async updateBookMark(
+    @User() user: Users,
+    @Param('id') roadId: string,
+  ) {
+    const data = await this.roadsService.updateBookMark(user, Number(roadId));
+
+    return {
+      resCode: 'SUCCESS_UPDATE_BOOKMARK',
+      message: '성공적으로 북마크를 변경했습니다.',
+      data: data
+    };
+  }
+
+  @Get('bookmark')
+  @UseGuards(JwtAuthGuard)
+  async getBookMark(
+    @User() user: Users,
+    @Query() pagingDTO: PagingDTO
+  ) {
+    const getRoadsOrNull = await this.roadsService.getBookMark(
+      user,
+      pagingDTO.page,
+      pagingDTO.pageSize
+    )
+
+    return {
+      resCode: 'SUCCESS_UPDATE_BOOKMARK',
+      message: '성공적으로 북마크 목록을 조회했습니다.',
+      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull),
+    }
+  }
 
   @Post('upload')
   @UseInterceptors(FilesInterceptor('files'))
