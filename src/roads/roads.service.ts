@@ -305,6 +305,7 @@ export class RoadsService {
     const road = await this.getRoadById(roadId)
     const bookmark = await Bookmarks.findOne({
       where: {
+        userId: user.id,
         road: road
       }
     })
