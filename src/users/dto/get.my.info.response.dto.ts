@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Categories } from 'src/entities/categories.entity';
-import { Places } from 'src/entities/places.entity';
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { Users } from 'src/entities/users.entity';
 import { GetPlacesResponseDTO } from 'src/places/dto/get.places.response.dto';
 import { FavoriteCategoriesDTO } from './favorite-categories.dto';
+import { FavoritePlacesDTO } from './favorite.places.dto';
 
 export class GetMyInfoResponseDto {
   @ApiProperty()
@@ -20,10 +19,16 @@ export class GetMyInfoResponseDto {
   profileImageUrl: string | null;
 
   @ApiProperty()
+  @IsObject()
   places: GetPlacesResponseDTO | null;
 
   @ApiProperty()
+  @IsObject({ each: true })
   favoriteCategories: FavoriteCategoriesDTO[];
+
+  @ApiProperty()
+  @IsObject({ each: true })
+  favoritePlaces: FavoritePlacesDTO[];
 
   // == Static methods ==
   static fromUser(user: Users): GetMyInfoResponseDto {
@@ -34,9 +39,14 @@ export class GetMyInfoResponseDto {
     dto.places = user.places
       ? GetPlacesResponseDTO.fromPlace(user.places)
       : null;
-    dto.favoriteCategories = user.favorite_categories.map((category) => {
-      return FavoriteCategoriesDTO.fromCategory(category);
-    });
+    dto.favoriteCategories =
+      user.favoriteCategories?.map((category) => {
+        return FavoriteCategoriesDTO.fromCategory(category);
+      }) ?? [];
+    dto.favoritePlaces =
+      user.favoritePlaces?.map((place) => {
+        return FavoritePlacesDTO.fromPlaces(place);
+      }) ?? [];
     return dto;
   }
 }

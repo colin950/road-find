@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { CreatedUpdatedTime } from './common/created.updated.time.entity';
 import { Roads } from './roads.entity';
+import { Users } from './users.entity';
 
 @Entity()
 export class Places extends CreatedUpdatedTime {
@@ -29,6 +30,8 @@ export class Places extends CreatedUpdatedTime {
 
   // == Relations ==
   @OneToMany(() => Roads, (road) => road.place)
-  @JoinTable()
   roads: Roads[];
+
+  @OneToMany(() => Users, (user) => user.places)
+  users: Users[];
 }

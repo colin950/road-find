@@ -5,6 +5,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -28,8 +29,8 @@ export class Users extends CreatedUpdatedTime {
   @Index({ unique: true })
   email!: string;
 
-  @Column()
-  password!: string;
+  @Column({ select: false })
+  password?: string;
 
   @Column({ length: 10, default: '' })
   @Index({ unique: true })
@@ -42,17 +43,8 @@ export class Users extends CreatedUpdatedTime {
   @Index({ unique: true })
   snsId?: string;
 
-  @Column({ nullable: true })
+  @Column({ length: 10, nullable: true })
   token?: string;
-
-  @Column({ type: 'timestamptz', nullable: true })
-  confirmedAt?: Date;
-
-  @Column({ type: 'timestamptz', nullable: true })
-  signOutAt?: Date;
-
-  @Column({ type: 'boolean', default: false })
-  isSignOut?: boolean;
 
   @Column({ nullable: true })
   profileImageUrl?: string;
@@ -61,23 +53,34 @@ export class Users extends CreatedUpdatedTime {
   @OneToMany(() => Roads, (road) => road.user, {
     cascade: true,
   })
-  roads: Roads[];
+  roads: Promise<Roads[]>;
 
   @ManyToMany(() => Categories, {
     cascade: true,
+    eager: true,
   })
   @JoinTable({ name: 'favorite_categories' })
-  favorite_categories: Categories[];
+  favoriteCategories: Categories[];
+
+  @ManyToMany(() => Places, {
+    cascade: true,
+    eager: true,
+  })
+  @JoinTable({ name: 'favorite_places' })
+  favoritePlaces: Places[];
+
+  @ManyToOne(() => Places, (place) => place.users, {
+    cascade: true,
+    nullable: true,
+    eager: true,
+  })
+  places: Places | null;
 
   @ManyToMany(() => Roads, {
     cascade: true,
   })
   @JoinTable({ name: 'boomarks' })
-  bookmarks: Roads[];
-
-  @OneToOne(() => Places, { cascade: true, nullable: true })
-  @JoinColumn()
-  places: Places | null;
+  bookmarks: Promise<Roads[]>;
 
   static async createUser(user: any) {
     return await this.createQueryBuilder()
@@ -105,5 +108,12 @@ export class Users extends CreatedUpdatedTime {
       .set({ password: password })
       .where({ email: email })
       .execute();
+  }
+
+  static async findPasswordByEmail(email: string) {
+    return await this.createQueryBuilder()
+      .addSelect('Users.password')
+      .where({ email })
+      .getOne();
   }
 }

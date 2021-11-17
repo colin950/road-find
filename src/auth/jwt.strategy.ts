@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { jwtConstants } from './constants';
-import { AuthUser, JwtPayload } from './auth.types';
+import { JwtPayload } from './auth.types';
 import { Users } from 'src/entities/users.entity';
 import { ErrorCode } from 'src/util/interceptors/http-exception.filter';
 
@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<AuthUser> {
+  async validate(payload: JwtPayload): Promise<Users> {
     const user = await Users.findOne(payload.sub);
     if (!user) {
       throw new HttpException(
@@ -27,7 +27,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         HttpStatus.OK,
       );
     }
-    const { password, ...result } = user;
-    return result;
+    return user;
   }
 }

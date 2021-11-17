@@ -3,15 +3,15 @@ import { JwtService } from '@nestjs/jwt';
 import { Users } from '../entities/users.entity';
 import { isHashValid } from '../util/cipher';
 import { ErrorCode } from '../util/interceptors/http-exception.filter';
-import { AuthUser, JwtPayload } from './auth.types';
+import { JwtPayload } from './auth.types';
 import { AccessTokenDTO } from './dto/access.token.dto';
 
 @Injectable()
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  async validateUser(email: string, pass: string): Promise<AuthUser | null> {
-    const user = await Users.findByEmail(email);
+  async validateUser(email: string, pass: string): Promise<Users | null> {
+    const user = await Users.findPasswordByEmail(email);
     if (!user) {
       throw new HttpException(
         {
@@ -34,13 +34,12 @@ export class AuthService {
       );
 
     if (user && isPasswordValid) {
-      const { password, ...result } = user;
-      return result as AuthUser;
+      return user;
     }
     return null;
   }
 
-  login(user: AuthUser): AccessTokenDTO {
+  login(user: Users): AccessTokenDTO {
     const payload: JwtPayload = { email: user.email, sub: user.id };
     return {
       accessToken: this.jwtService.sign(payload),
