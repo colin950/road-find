@@ -340,6 +340,9 @@ export class RoadsService {
       where: {
         user: user
       },
+      order: {
+        id: 'DESC'
+      },
       ...pageOptions
     })
 
@@ -373,6 +376,9 @@ export class RoadsService {
     const roadByIds = await Roads.find({
       where: {
         id: In(bookmarkRoadIds)
+      },
+      order: {
+        id: 'DESC'
       },
       ...pageOptions
     })
