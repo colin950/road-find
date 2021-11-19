@@ -286,8 +286,12 @@ export class RoadsService {
   }
 
   async getRoadById(roadId: number): Promise<Roads> {
-    const roadById = await Roads.findOne(roadId);
-
+    const roadById = await Roads.findOne({
+      relations:["bookmarks"],
+      where: {
+        id: roadId
+      }
+    });
     if (!roadById) {
       throw new HttpException(
         {
@@ -297,7 +301,6 @@ export class RoadsService {
         HttpStatus.OK,
       );
     }
-
     return roadById;
   }
 

@@ -61,6 +61,11 @@ export class CreateRoadResponseDTO {
   @IsString({ each: true })
   hashtags: string[] | null;
 
+  @ApiProperty()
+  @IsOptional()
+  @IsString({ each: true })
+  bookmarks: number[] | null;
+
   // == Static methods ==
   static fromRoad(road: Roads): CreateRoadResponseDTO {
     const createRoadResponseDto = new CreateRoadResponseDTO();
@@ -86,6 +91,8 @@ export class CreateRoadResponseDTO {
       road.images?.map((image) => image.imageUrl) ?? null;
     createRoadResponseDto.hashtags =
       road.hashtags?.map((hashtag) => hashtag.name) ?? null;
+    createRoadResponseDto.bookmarks =
+      road.bookmarks?.map((bookmark) => bookmark.userId) ?? null;
 
     return createRoadResponseDto;
   }
