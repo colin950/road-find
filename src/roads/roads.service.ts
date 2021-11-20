@@ -312,12 +312,17 @@ export class RoadsService {
       category: Equal(categoryId),
     };
 
+    const orderOptions: Record<string, 'ASC' | 'DESC' | 1 | -1 | undefined> = {
+      id: 'DESC',
+    };
+
     if (findOptions && findOptions.lastId) {
       findOptions.direction ||= 'backward';
       if (findOptions.direction === 'backward') {
         whereOptions.id = LessThan(findOptions.lastId);
       } else if (findOptions.direction === 'forward') {
         whereOptions.id = MoreThan(findOptions.lastId);
+        orderOptions.id = 'ASC';
       }
     }
 
@@ -329,10 +334,12 @@ export class RoadsService {
     const roads = await Roads.find({
       where: whereOptions,
       take: takeLimitation,
-      order: {
-        id: 'DESC',
-      },
+      order: orderOptions,
     });
+
+    if (findOptions && findOptions.direction === 'forward') {
+      roads.reverse();
+    }
 
     return roads;
   }
@@ -349,12 +356,17 @@ export class RoadsService {
       place: Equal(placeCode),
     };
 
+    const orderOptions: Record<string, 'ASC' | 'DESC' | 1 | -1 | undefined> = {
+      id: 'DESC',
+    };
+
     if (findOptions && findOptions.lastId) {
       findOptions.direction ||= 'backward';
       if (findOptions.direction === 'backward') {
         whereOptions.id = LessThan(findOptions.lastId);
       } else if (findOptions.direction === 'forward') {
         whereOptions.id = MoreThan(findOptions.lastId);
+        orderOptions.id = 'ASC';
       }
     }
 
@@ -366,10 +378,12 @@ export class RoadsService {
     const roads = await Roads.find({
       where: whereOptions,
       take: takeLimitation,
-      order: {
-        id: 'DESC',
-      },
+      order: orderOptions,
     });
+
+    if (findOptions && findOptions.direction === 'forward') {
+      roads.reverse();
+    }
 
     return roads;
   }
