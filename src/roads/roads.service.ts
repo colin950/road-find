@@ -12,7 +12,7 @@ import { HashTags } from 'src/entities/hashtags.entity';
 import { Equal, FindOperator, In, LessThan, MoreThan } from 'typeorm';
 import { Users } from 'src/entities/users.entity';
 import { direction } from './dto/get-roads.request.dto';
-import {Bookmarks} from '../entities/bookmarks.entity'
+import { Bookmarks } from '../entities/bookmarks.entity';
 
 @Injectable()
 export class RoadsService {
@@ -287,10 +287,10 @@ export class RoadsService {
 
   async getRoadById(roadId: number): Promise<Roads> {
     const roadById = await Roads.findOne({
-      relations:["bookmarks"],
+      relations: ['bookmarks'],
       where: {
-        id: roadId
-      }
+        id: roadId,
+      },
     });
     if (!roadById) {
       throw new HttpException(
@@ -304,31 +304,31 @@ export class RoadsService {
     return roadById;
   }
 
-  async updateBookMark(user: Users, roadId: number): Promise<Boolean> {
-    const road = await this.getRoadById(roadId)
+  async updateBookMark(user: Users, roadId: number): Promise<boolean> {
+    const road = await this.getRoadById(roadId);
     const bookmark = await Bookmarks.findOne({
       where: {
         userId: user.id,
-        road: road
-      }
-    })
+        road: road,
+      },
+    });
 
     if (bookmark) {
       await bookmark.remove();
-      return false
+      return false;
     } else {
       const createBookmark = new Bookmarks();
       createBookmark.userId = user.id;
       createBookmark.road = road;
       await createBookmark.save();
-      return true
+      return true;
     }
   }
 
   async getMyRoad(
     user: Users,
     page?: number,
-    pageSize?: number
+    pageSize?: number,
   ): Promise<Roads[]> {
     const pageOptions = {};
     if (pageSize) {
@@ -341,13 +341,13 @@ export class RoadsService {
 
     const roadByIds = await Roads.find({
       where: {
-        user: user
+        user: user,
       },
       order: {
-        id: 'DESC'
+        id: 'DESC',
       },
-      ...pageOptions
-    })
+      ...pageOptions,
+    });
 
     return roadByIds;
   }
@@ -355,14 +355,14 @@ export class RoadsService {
   async getBookMark(
     user: Users,
     page?: number,
-    pageSize?: number
+    pageSize?: number,
   ): Promise<Roads[]> {
     const bookmarkRoads = await Bookmarks.find({
-      relations:["road"],
+      relations: ['road'],
       where: {
-        userId: user.id
-      }
-    })
+        userId: user.id,
+      },
+    });
     const pageOptions = {};
     if (pageSize) {
       pageOptions['take'] = pageSize;
@@ -372,19 +372,20 @@ export class RoadsService {
       pageOptions['skip'] = (page - 1) * pageSize;
     }
 
-    let bookmarkRoadIds: (number | undefined)[] | undefined= bookmarkRoads?.map((road: Bookmarks) => {
-      return road.road?.id
-    })
+    const bookmarkRoadIds: (number | undefined)[] | undefined =
+      bookmarkRoads?.map((road: Bookmarks) => {
+        return road.road?.id;
+      });
 
     const roadByIds = await Roads.find({
       where: {
-        id: In(bookmarkRoadIds)
+        id: In(bookmarkRoadIds),
       },
       order: {
-        id: 'DESC'
+        id: 'DESC',
       },
-      ...pageOptions
-    })
+      ...pageOptions,
+    });
 
     return roadByIds;
   }

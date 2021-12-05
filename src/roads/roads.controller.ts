@@ -30,7 +30,8 @@ import { CategoryValidationPipe } from './pipe/category.validaiton.pipe';
 import { PlaceValidationPipe } from './pipe/place.validaiton.pipe';
 import { RoadsService } from './roads.service';
 import { MulterFile } from './types/file';
-import {PagingDTO} from './dto/paging.dto'
+import { PagingDTO } from './dto/paging.dto';
+import { JwtAuthForRoadsListGuard } from 'src/auth/jwt-auth-for-roads-list.guard';
 
 @Controller('roads')
 export class RoadsController {
@@ -38,55 +39,46 @@ export class RoadsController {
 
   @Get('my')
   @UseGuards(JwtAuthGuard)
-  async getMyRoad(
-    @User() user: Users,
-    @Query() pagingDTO: PagingDTO
-  ) {
+  async getMyRoad(@User() user: Users, @Query() pagingDTO: PagingDTO) {
     const getRoadsOrNull = await this.roadsService.getMyRoad(
       user,
       pagingDTO.page,
-      pagingDTO.pageSize
-    )
+      pagingDTO.pageSize,
+    );
 
     return {
       resCode: 'SUCCESS_UPDATE_BOOKMARK',
       message: '성공적으로 나의길 목록을 조회했습니다.',
-      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull),
-    }
+      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull, user),
+    };
   }
 
   @Put('bookmark/:id')
   @UseGuards(JwtAuthGuard)
-  async updateBookMark(
-    @User() user: Users,
-    @Param('id') roadId: string,
-  ) {
+  async updateBookMark(@User() user: Users, @Param('id') roadId: string) {
     const data = await this.roadsService.updateBookMark(user, Number(roadId));
 
     return {
       resCode: 'SUCCESS_UPDATE_BOOKMARK',
       message: '성공적으로 북마크를 변경했습니다.',
-      data: data
+      data: data,
     };
   }
 
   @Get('bookmark')
   @UseGuards(JwtAuthGuard)
-  async getBookMark(
-    @User() user: Users,
-    @Query() pagingDTO: PagingDTO
-  ) {
+  async getBookMark(@User() user: Users, @Query() pagingDTO: PagingDTO) {
     const getRoadsOrNull = await this.roadsService.getBookMark(
       user,
       pagingDTO.page,
-      pagingDTO.pageSize
-    )
+      pagingDTO.pageSize,
+    );
 
     return {
       resCode: 'SUCCESS_UPDATE_BOOKMARK',
       message: '성공적으로 북마크 목록을 조회했습니다.',
-      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull),
-    }
+      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull, user),
+    };
   }
 
   @Post('upload')
@@ -146,7 +138,7 @@ export class RoadsController {
     return {
       resCode: 'SUCCESS_CREATE_ROAD',
       message: '성공적으로 길을 생성했습니다.',
-      data: CreateRoadResponseDTO.fromRoad(createRoad),
+      data: CreateRoadResponseDTO.fromRoad(createRoad, user),
     };
   }
 
@@ -182,7 +174,7 @@ export class RoadsController {
     return {
       resCode: 'SUCCESS_UPDATE_ROAD',
       message: '성공적으로 길을 수정했습니다.',
-      data: CreateRoadResponseDTO.fromRoad(updateRoad),
+      data: CreateRoadResponseDTO.fromRoad(updateRoad, user),
     };
   }
 
@@ -201,7 +193,9 @@ export class RoadsController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthForRoadsListGuard)
   async getRoadById(
+    @User() userOrNull: Users | null,
     @Param('id') roadId: string,
   ): Promise<CommonResponse<GetRoadResponseDTO>> {
     const getRoad = await this.roadsService.getRoadById(Number(roadId));
@@ -209,12 +203,14 @@ export class RoadsController {
     return {
       resCode: 'SUCCESS_GET_ROAD_BY_ID',
       message: '성공적으로 길을 조회했습니다.',
-      data: GetRoadResponseDTO.fromRoad(getRoad),
+      data: GetRoadResponseDTO.fromRoad(getRoad, userOrNull),
     };
   }
 
   @Get('')
+  @UseGuards(JwtAuthForRoadsListGuard)
   async getRoads(
+    @User() userOrNull: Users | null,
     @Query() getRoadsRequestDTO: GetRoadsRequestDTO,
   ): Promise<CommonResponse<GetRoadsResponseDTO | null>> {
     const { placeCode, categoryId, lastId, limit, direction } =
@@ -238,7 +234,7 @@ export class RoadsController {
     return {
       resCode: 'SUCCESS_GET_ROADS_BY_ID',
       message: '성공적으로 길을 조회했습니다.',
-      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull),
+      data: GetRoadsResponseDTO.fromRoads(getRoadsOrNull, userOrNull),
     };
   }
 }

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -8,6 +9,7 @@ import {
 } from 'class-validator';
 import { LineString, Point, Position } from 'geojson';
 import { Roads } from 'src/entities/roads.entity';
+import { Users } from 'src/entities/users.entity';
 import { Spot } from '../types/spot';
 
 export class CreateRoadResponseDTO {
@@ -62,12 +64,15 @@ export class CreateRoadResponseDTO {
   hashtags: string[] | null;
 
   @ApiProperty()
-  @IsOptional()
-  @IsString({ each: true })
-  bookmarks: number[] | null;
+  @IsBoolean()
+  is_bookmarked: boolean;
+
+  @ApiProperty()
+  @IsBoolean()
+  is_mine: boolean;
 
   // == Static methods ==
-  static fromRoad(road: Roads): CreateRoadResponseDTO {
+  static fromRoad(road: Roads, user: Users | null): CreateRoadResponseDTO {
     const createRoadResponseDto = new CreateRoadResponseDTO();
 
     createRoadResponseDto.id = road.id;
@@ -91,8 +96,18 @@ export class CreateRoadResponseDTO {
       road.images?.map((image) => image.imageUrl) ?? null;
     createRoadResponseDto.hashtags =
       road.hashtags?.map((hashtag) => hashtag.name) ?? null;
-    createRoadResponseDto.bookmarks =
-      road.bookmarks?.map((bookmark) => bookmark.userId) ?? null;
+
+    if (road.user && user) {
+      const bookmarks =
+        road.bookmarks?.map((bookmark) => bookmark.userId) ?? null;
+      createRoadResponseDto.is_bookmarked =
+        bookmarks?.includes(user.id) ?? false;
+
+      createRoadResponseDto.is_mine = road.user.id === user.id;
+    } else {
+      createRoadResponseDto.is_bookmarked = false;
+      createRoadResponseDto.is_mine = false;
+    }
 
     return createRoadResponseDto;
   }
