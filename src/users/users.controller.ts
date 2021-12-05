@@ -49,17 +49,20 @@ export class UsersController {
   @Post('')
   async create(
     @Body() createUserDTO: CreateUsersDTO,
-  ): Promise<CommonResponse<boolean>> {
-    await this.usersService.create(
+  ): Promise<CommonResponse<AccessTokenDTO>> {
+    const user: Users = await this.usersService.create(
       createUserDTO.email,
       createUserDTO.password,
       createUserDTO.nickname,
       createUserDTO.placeCode,
     );
 
+    const tokens: AccessTokenDTO = await this.authService.login(user);
+
     return {
       resCode: 'SUCCESS_SIGN_UP',
       message: '회원가입에 성공하였습니다.',
+      data: tokens,
     };
   }
 
