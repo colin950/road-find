@@ -55,10 +55,14 @@ export class RoadsService {
           where: {
             name: In(roadOptions.hashtags),
           },
+          withDeleted: true,
         })
       : [];
 
-    const existedHashTags = getHashTags.map((hashTag) => hashTag.name);
+    const existedHashTags = getHashTags.map((hashTag) => {
+      hashTag.recover();
+      return hashTag.name;
+    });
     const createdHashTags: HashTags[] | null =
       roadOptions.hashtags
         ?.filter((hashtag) => !existedHashTags.includes(hashtag))
