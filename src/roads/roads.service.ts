@@ -13,6 +13,7 @@ import { Equal, FindOperator, In, LessThan, MoreThan } from 'typeorm';
 import { Users } from 'src/entities/users.entity';
 import { direction } from './dto/get-roads.request.dto';
 import { Bookmarks } from '../entities/bookmarks.entity';
+import { ErrorCode } from 'src/util/interceptors/http-exception.filter';
 
 @Injectable()
 export class RoadsService {
@@ -152,7 +153,7 @@ export class RoadsService {
         throw new HttpException(
           {
             resCode: 'NOT_FOUND_PLACE',
-            message: '요청으로 들어온 주소 정보가 없습니다.',
+            message: ErrorCode.NOT_FOUND_PLACE,
           },
           HttpStatus.OK,
         );

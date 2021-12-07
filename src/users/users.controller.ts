@@ -39,7 +39,7 @@ export class UsersController {
 
     return {
       resCode: 'SUCCESS_LOGIN',
-      message: '로그인에 성공하였습니다.',
+      message: '나들길에 오신 것을 환영합니다.',
       data: {
         ...tokens,
       },
@@ -61,7 +61,7 @@ export class UsersController {
 
     return {
       resCode: 'SUCCESS_SIGN_UP',
-      message: '회원가입에 성공하였습니다.',
+      message: '나들길에 오신 것을 환영합니다.',
       data: tokens,
     };
   }
@@ -76,7 +76,7 @@ export class UsersController {
 
     return {
       resCode: 'SUCCESS_SEND_MAIL_SIGN_UP_TOKEN',
-      message: '회원가입 인증 토큰을 전송하였습니다.',
+      message: '이메일을 통해 인증 번호를 확인해주세요.',
     };
   }
 
@@ -92,7 +92,7 @@ export class UsersController {
 
     return {
       resCode: 'SUCCESS_VERIFYING',
-      message: '토큰 인증에 성공하였습니다.',
+      message: '인증되었습니다.',
     };
   }
 
@@ -104,7 +104,7 @@ export class UsersController {
 
     return {
       resCode: 'SUCCESS_REQUEST_RESET_PASSWORD',
-      message: '비밀번호 토큰 전송에 성공하였습니다.',
+      message: '이메일을 통해 인증을 진행해주세요.',
     };
   }
 
@@ -140,7 +140,7 @@ export class UsersController {
 
     return {
       resCode: 'SUCCESS_UPDATE_CATEGORY',
-      message: '성공적으로 선호 카테고리를 변경했습니다.',
+      message: '선호 카테고리를 변경했습니다.',
     };
   }
 

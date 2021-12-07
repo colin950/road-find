@@ -7,17 +7,15 @@ import {
 import { Response } from 'express';
 
 export enum ErrorCode {
-  NOT_FOUND_EMAIL = 'not_found_email',
-  INVALID_USER_STATUS = 'invalid_user_status',
-  INVALID_PASSWORD = 'invalid_password',
-  ALREADY_EXIST_EMAIL = 'already_exist_email',
-  UNAUTHORIZED = 'UNAUTHORIZED',
-  NOT_FOUND_TOKEN = 'NOT_FOUND_TOKEN',
+  NOT_FOUND_EMAIL = '존재하지 않는 이메일입니다. ',
+  INVALID_PASSWORD = '아이디 또는 비밀번호가 잘못 입력 되었습니다.',
+  ALREADY_EXIST_EMAIL = '이미 가입된 이메일입니다.',
+  NOT_FOUND_TOKEN = '인증 번호가 일치하지 않습니다. ',
   INTERNAL_SERVER_ERROR = 'internal_server_error',
-  SEND_MAIL_ERROR = 'send_mail_error',
-  NOT_FOUND_USER = 'not_found_user',
-  NOT_FOUND_PLACE = 'not_found_place',
-  ALREADY_EXIST_NICKNAME = 'already_exist_nickname',
+  SEND_MAIL_ERROR = '메일 보내기에 실패하였습니다. 다시 시도해주세요.',
+  NOT_FOUND_USER = '유저 정보를 조회할 수 없습니다.',
+  NOT_FOUND_PLACE = '요청으로 들어온 주소 정보가 없습니다.',
+  ALREADY_EXIST_NICKNAME = '이미 사용중인 닉네임입니다.',
 }
 
 @Catch(HttpException)

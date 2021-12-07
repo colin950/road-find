@@ -116,7 +116,7 @@ export class UsersService {
       throw new HttpException(
         {
           resCode: 'SEND_MAIL_ERROR',
-          message: '메일 보내기에 실패하였습니다.',
+          message: ErrorCode.SEND_MAIL_ERROR,
         },
         HttpStatus.OK,
       );

@@ -17,7 +17,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new HttpException(
         {
           resCode: 'FAILED_AUTHORIZATION',
-          message: '인증에 실패하였습니다.',
+          message: '인증 기한이 만료되었습니다. 다시 시도해주세요.',
         },
         HttpStatus.OK,
       );
